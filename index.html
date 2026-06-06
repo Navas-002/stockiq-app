@@ -477,6 +477,11 @@ const TOOLTIPS = {
   'EPS':'Earnings Per Share — how much profit the company makes per share of stock.',
   'Forward Dividend':'Cash the company pays you per year just for holding the stock.',
   'Exchange':'The stock exchange where this stock is listed and traded.',
+  'Profit Margin':'How much of every dollar in revenue the company keeps as profit. Higher = more efficient.',
+  'Revenue Growth':'How fast the company sales are growing compared to last year. Positive = growing.',
+  'Debt / Equity':'How much debt vs equity the company has. Lower is generally safer for investors.',
+  'Return on Equity':'How efficiently the company turns shareholder money into profit. Higher is better.',
+  '1Y Price Target':'Analyst estimate of where the stock price could be in 12 months.',
 };
 
 function tt(key) {
@@ -579,14 +584,18 @@ function buildStatsTable(stock) {
     ["Day's Range", stock.low&&stock.high ? `$${stock.low.toFixed(2)} – $${stock.high.toFixed(2)}` : '—'],
     ["52 Week Range", stock.low52&&stock.high52 ? `$${(+stock.low52).toFixed(2)} – $${(+stock.high52).toFixed(2)}` : '—'],
     ["Volume", stock.volume ? (+stock.volume).toLocaleString() : '—'],
-    ["Avg. Volume", '—'],
+    ["Beta", stock.beta ? (+stock.beta).toFixed(2) : '—'],
+    ["Profit Margin", stock.profitMargin ? (+stock.profitMargin).toFixed(2)+'%' : '—'],
+    ["Revenue Growth", stock.revenueGrowth ? (+stock.revenueGrowth).toFixed(2)+'%' : '—'],
   ];
   const right = [
     ["Market Cap", stock.marketCap || '—'],
-    ["Beta", stock.beta ? (+stock.beta).toFixed(2) : '—'],
     ["P/E Ratio", stock.pe ? (+stock.pe).toFixed(2) : '—'],
     ["EPS", stock.eps ? '$'+(+stock.eps).toFixed(2) : '—'],
     ["Forward Dividend", stock.dividend || '—'],
+    ["Debt / Equity", stock.debtEquity ? (+stock.debtEquity).toFixed(2) : '—'],
+    ["Return on Equity", stock.roe ? (+stock.roe).toFixed(2)+'%' : '—'],
+    ["1Y Price Target", stock.priceTarget || '—'],
     ["Exchange", stock.exchange || '—'],
   ];
   const render = rows => rows.map(([k,v]) => `<div class="stat-row"><div class="stat-key">${k}${tt(k)}</div><div class="stat-val">${v}</div></div>`).join('');
