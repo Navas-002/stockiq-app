@@ -695,22 +695,29 @@ async function analyzeStock(){hideSugg();const t=document.getElementById('ticker
 
 async function quickAnalyze(ticker){
   hideSugg();
-  currentTicker=ticker; chatHistory=[]; chatStockContext=ticker+' — '+ticker+' stock';
-  document.getElementById('tickerInput').value=ticker;
-  document.getElementById('analyze-placeholder').style.display='none';
-  document.getElementById('analyze-result').style.display='';
-  document.getElementById('ai-loading').style.display='flex'; document.getElementById('ai-messages').innerHTML='<div id="ai-loading" class="ai-loading"><div class="spinner"></div>Analyzing live market data...</div>'; document.getElementById('ai-input-row').style.display='none';
-  document.getElementById('ai-content').style.display='none';
-  document.getElementById('news-section').style.display='none';
-  document.getElementById('res-ticker').textContent=ticker;
-  document.getElementById('res-co-name').textContent='Loading...';
-  document.getElementById('res-price').textContent='—';
-  document.getElementById('add-wl-btn').textContent='+ Add to Watchlist';
-  document.getElementById('add-wl-btn').style.background='';
-  allCandles=[];
+  currentTicker = ticker;
+  chatHistory = [];
+  chatStockContext = ticker;
+  document.getElementById('tickerInput').value = ticker;
+  document.getElementById('analyze-placeholder').style.display = 'none';
+  document.getElementById('analyze-result').style.display = '';
+  // Reset AI chat
+  const msgs = document.getElementById('ai-messages');
+  msgs.innerHTML = '<div class="ai-loading"><div class="spinner"></div>Analyzing live market data...</div>';
+  document.getElementById('ai-input-row').style.display = 'none';
+  document.getElementById('news-section').style.display = 'none';
+  document.getElementById('res-ticker').textContent = ticker;
+  document.getElementById('res-co-name').textContent = 'Loading...';
+  document.getElementById('res-price').textContent = '—';
+  document.getElementById('res-change').textContent = '';
+  document.getElementById('res-cap').textContent = '—';
+  document.getElementById('res-sector').textContent = '—';
+  document.getElementById('add-wl-btn').textContent = '+ Add to Watchlist';
+  document.getElementById('add-wl-btn').style.background = '';
+  allCandles = [];
   try{
     const[stock,history]=await Promise.all([apiFetch(`/stock/${ticker}`),apiFetch(`/stock/${ticker}/history?days=365`)]);
-    document.getElementById('res-co-name').textContent=stock.name; chatStockContext=`${ticker} (${stock.name}), Price $${stock.price.toFixed(2)}, sector ${stock.sector||'unknown'}`;  chatHistory=[];
+    document.getElementById('res-co-name').textContent = stock.name; chatStockContext = `${ticker} (${stock.name}), current price $${stock.price.toFixed(2)}, sector ${stock.sector||'unknown'}, market cap ${stock.marketCap||'unknown'}`;
     document.getElementById('res-ticker').textContent=ticker;
     document.getElementById('res-price').textContent='$'+stock.price.toFixed(2);
     const up=stock.change>=0;
@@ -723,16 +730,23 @@ async function quickAnalyze(ticker){
     buildRisk(stock.changePct,stock.sector);
     if(history.candles&&history.candles.length){allCandles=history.candles;buildChart(rangeC(allCandles,currentRange),currentType);}
     try{const news=await apiFetch(`/stock/${ticker}/news`);if(news.articles&&news.articles.length){document.getElementById('news-section').style.display='';document.getElementById('news-list').innerHTML=news.articles.map(a=>`<div class="news-item"><a href="${a.url}" target="_blank">${a.headline}</a><div class="news-meta">${a.source} · ${a.datetime}</div></div>`).join('');}}catch(e){}
-    const verdict=stock.changePct>1.5?'buy':stock.changePct<-1.5?'caution':'hold';
-    const verdictText=verdict==='buy'?'▲ Momentum Up':verdict==='caution'?'▼ Pulling Back':'● Relatively Stable';
-    const prompt=`You are a friendly, knowledgeable financial coach for teenagers aged 16-20 who are learning to invest. You are analyzing ${ticker} (${stock.name}) with this live data: Price $${stock.price.toFixed(2)}, change today ${stock.changePct.toFixed(2)}%, market cap ${stock.marketCap||'unknown'}, sector ${stock.sector||'unknown'}. Give a clear 3-4 sentence analysis: briefly explain what this company does, comment on today's price movement, name ONE key risk a young investor should know about this stock. End with an encouraging educational takeaway. Keep it conversational, avoid jargon, and don't tell them to directly buy or sell.`;
-    const initMsg = await callClaude([{role:'user',content:prompt}]);
-    document.getElementById('ai-loading').style.display='none';
-    appendAIMessage('assistant', initMsg, verdict, verdictText);
-    document.getElementById('ai-input-row').style.display='flex';
-  }catch(err){
-    document.getElementById('res-co-name').textContent='Could not load '+ticker;
-    document.getElementById('ai-loading').innerHTML='<span style="color:var(--red)">API warming up — try again in 30 seconds.</span>';
+    const verdict = stock.changePct > 1.5 ? 'buy' : stock.changePct < -1.5 ? 'caution' : 'hold';
+    const verdictText = verdict === 'buy' ? '▲ Momentum Up' : verdict === 'caution' ? '▼ Pulling Back' : '● Relatively Stable';
+    const prompt = `You are a friendly financial coach for teenagers 16-20 learning to invest. Analyze ${ticker} (${stock.name}): Price $${stock.price.toFixed(2)}, change ${stock.changePct.toFixed(2)}%, sector ${stock.sector||'unknown'}, market cap ${stock.marketCap||'unknown'}. Write 3-4 clear sentences: what the company does, whether today's move is notable, ONE key risk. End with an educational takeaway. No jargon. No direct buy/sell.`;
+    chatHistory = [{role: 'user', content: prompt}];
+    try {
+      const initMsg = await callClaude(chatHistory);
+      chatHistory.push({role: 'assistant', content: initMsg});
+      const msgs = document.getElementById('ai-messages');
+      msgs.innerHTML = '';
+      appendAIMessage('assistant', initMsg, verdict, verdictText);
+      document.getElementById('ai-input-row').style.display = 'flex';
+    } catch(e) {
+      document.getElementById('ai-messages').innerHTML = '<div style="color:var(--red);font-size:13px;padding:10px 0">AI analysis unavailable. API may be warming up.</div>';
+    }
+  } catch(err) {
+    document.getElementById('res-co-name').textContent = 'Could not load ' + ticker;
+    document.getElementById('ai-messages').innerHTML = '<div style="color:var(--red);font-size:13px;padding:10px 0">Could not load data. API may be warming up — try again in 30 seconds.</div>';
   }
 }
 
