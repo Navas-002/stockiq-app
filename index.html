@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Syndicate — Youth Investor Platform</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23040406'/%3E%3Crect width='32' height='32' rx='7' fill='none' stroke='%2300ff88' stroke-width='1.5' opacity='0.4'/%3E%3Ctext x='4' y='24' font-family='Arial Black,Arial,sans-serif' font-size='22' font-weight='900' fill='%2300ff88'%3ES%3C/text%3E%3Ctext x='15' y='23' font-family='Arial Black,Arial,sans-serif' font-size='10' font-weight='900' fill='%23f0f0f5' letter-spacing='-0.5'%3EYN%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23040406'/%3E%3Crect width='32' height='32' rx='7' fill='none' stroke='%2300ff88' stroke-width='1.5' opacity='0.35'/%3E%3Ctext x='6' y='24' font-family='Arial Black,Arial,sans-serif' font-size='21' font-weight='900' fill='%2300ff88'%3E%24%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
@@ -46,8 +46,12 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0
 .nav-btn{padding:7px 18px;border:none;background:transparent;color:var(--white-dim);border-radius:7px;cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:500;transition:all .2s;white-space:nowrap}
 .nav-btn:hover{color:var(--white);background:var(--surface2)}
 .nav-btn.active{background:var(--surface3);color:var(--neon);box-shadow:0 0 0 1px var(--border2)}
-.live-pill{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);padding:6px 12px;border-radius:20px;font-family:var(--mono);font-size:10px;color:var(--neon);font-weight:500}
-.live-dot{width:5px;height:5px;background:var(--neon);border-radius:50%;box-shadow:0 0 6px var(--neon);animation:blink 2s infinite}
+.live-pill{display:flex;align-items:center;gap:3px;background:var(--surface);border:1px solid rgba(0,255,136,.2);padding:8px 12px;border-radius:8px;height:34px}
+.live-bar{width:3px;border-radius:2px;background:var(--neon);box-shadow:0 0 6px rgba(0,255,136,.6)}
+.live-bar:nth-child(1){height:8px;animation:bar 1.2s ease-in-out infinite}
+.live-bar:nth-child(2){height:14px;animation:bar 1.2s ease-in-out infinite .2s}
+.live-bar:nth-child(3){height:10px;animation:bar 1.2s ease-in-out infinite .4s}
+@keyframes bar{0%,100%{transform:scaleY(.4);opacity:.5}50%{transform:scaleY(1);opacity:1}}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* PAGE TRANSITIONS */
@@ -247,20 +251,20 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0
 <body>
 <div class="app">
   <nav>
-    <div class="logo"><div class="logo-icon">S</div><div class="logo-text"><span>S</span>YNDICATE</div></div>
+    <div class="logo"><div class="logo-icon">$</div><div class="logo-text"><span>$</span>YNDICATE</div></div>
     <div class="nav-links">
       <button class="nav-btn active" onclick="showPage('dashboard')">Dashboard</button>
       <button class="nav-btn" onclick="showPage('analyze')">Analyze</button>
       <button class="nav-btn" onclick="showPage('learn')">Learn</button>
     </div>
-    <div class="live-pill"><span class="live-dot"></span>LIVE</div>
+    <div class="live-pill"><span class="live-bar"></span><span class="live-bar"></span><span class="live-bar"></span></div>
   </nav>
 
   <!-- DASHBOARD -->
   <div id="page-dashboard" class="page active">
     <div class="hero">
       <div class="hero-glow"></div>
-      <div class="hero-tag">⚡ Youth Investor Platform</div>
+      <div class="hero-tag">Youth Investor Platform</div>
       <h1>Learn to invest<br><em>before</em> you invest.</h1>
       <p>Real market data. AI-powered analysis. Built for 16–20 year olds who want to understand the stock market before putting real money in.</p>
     </div>
@@ -297,7 +301,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0
   <!-- ANALYZE -->
   <div id="page-analyze" class="page">
     <div class="page-hd">
-      <div class="tag">🔍 Stock Analyzer</div>
+      <div class="tag">Stock Analyzer</div>
       <h2>Research any stock</h2>
       <p>Search any ticker on any exchange — live prices, charts, AI analysis, and beginner-friendly explanations.</p>
     </div>
@@ -388,24 +392,24 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0
       <div id="news-section" style="display:none">
         <div class="news-card"><div class="news-hd">Latest News</div><div id="news-list"></div></div>
       </div>
-      <div class="disclaimer">⚠️ StockIQ is for educational purposes only and is not financial advice. Always do your own research and speak with a licensed financial advisor before making investment decisions with real money.</div>
+      <div class="disclaimer">️ StockIQ is for educational purposes only and is not financial advice. Always do your own research and speak with a licensed financial advisor before making investment decisions with real money.</div>
     </div>
   </div>
 
   <!-- LEARN -->
   <div id="page-learn" class="page">
     <div class="page-hd">
-      <div class="tag">📚 Investor Education</div>
+      <div class="tag">Investor Education</div>
       <h2>Build your foundation</h2>
       <p>Everything you need to know before your first trade — explained simply.</p>
     </div>
     <div class="learn-grid">
-      <div class="learn-card"><h3>📈 What is a stock?</h3><p>Buying a stock means buying a small piece of ownership in a company. If the company grows and earns more profit, your piece becomes worth more. If it struggles, it loses value.</p><div class="tip">💡 Like owning a slice of a pizza shop. If the shop gets popular, your slice is worth more.</div></div>
-      <div class="learn-card"><h3>📊 RSI — Momentum</h3><p>Relative Strength Index measures buying/selling momentum on a scale of 0–100. It tells you whether a stock is being overbought (too much buying) or oversold (too much selling).</p><div class="tip">💡 RSI above 70 = possibly overbought. Below 30 = possibly oversold. These are signals, not guarantees.</div></div>
-      <div class="learn-card"><h3>📉 Moving Averages</h3><p>SMA smooths out daily price noise to show the real trend. The 20-day shows short-term momentum, the 50-day shows the medium-term direction traders follow.</p><div class="tip">💡 Price crossing above SMA 50 = often bullish. Crossing below = often bearish.</div></div>
-      <div class="learn-card"><h3>🥚 Diversification</h3><p>Never put all your money in one stock. Spread across companies, sectors, and even countries. If one company fails, your whole portfolio doesn't go with it.</p><div class="tip">💡 A single ETF like VOO gives you 500 companies at once — instant diversification for beginners.</div></div>
+      <div class="learn-card"><h3> What is a stock?</h3><p>Buying a stock means buying a small piece of ownership in a company. If the company grows and earns more profit, your piece becomes worth more. If it struggles, it loses value.</p><div class="tip"> Like owning a slice of a pizza shop. If the shop gets popular, your slice is worth more.</div></div>
+      <div class="learn-card"><h3> RSI — Momentum</h3><p>Relative Strength Index measures buying/selling momentum on a scale of 0–100. It tells you whether a stock is being overbought (too much buying) or oversold (too much selling).</p><div class="tip"> RSI above 70 = possibly overbought. Below 30 = possibly oversold. These are signals, not guarantees.</div></div>
+      <div class="learn-card"><h3> Moving Averages</h3><p>SMA smooths out daily price noise to show the real trend. The 20-day shows short-term momentum, the 50-day shows the medium-term direction traders follow.</p><div class="tip"> Price crossing above SMA 50 = often bullish. Crossing below = often bearish.</div></div>
+      <div class="learn-card"><h3> Diversification</h3><p>Never put all your money in one stock. Spread across companies, sectors, and even countries. If one company fails, your whole portfolio doesn't go with it.</p><div class="tip"> A single ETF like VOO gives you 500 companies at once — instant diversification for beginners.</div></div>
       <div class="learn-card full"><h3>⏳ The power of starting early — Compound Interest</h3><p>Your investment returns earn more returns over time. The earlier you start, the more powerful this effect becomes. Below: $1,000 invested at 8% annual return — starting at age 16 vs 26.</p><div class="chart-mini"><canvas id="compoundChart"></canvas></div></div>
-      <div class="learn-card full"><h3>📖 Essential terms — hover any for a plain English explanation</h3>
+      <div class="learn-card full"><h3> Essential terms — hover any for a plain English explanation</h3>
         <div class="terms-grid">
           <div class="term-item"><div class="term-word">P/E RATIO</div><div class="term-def">Price divided by earnings per share. The market's grade on how expensive a stock is. Average is ~20-25x.</div></div>
           <div class="term-item"><div class="term-word">MARKET CAP</div><div class="term-def">Total value of all shares. Small cap &lt;$2B, Mid $2-10B, Large &gt;$10B, Mega &gt;$200B.</div></div>
@@ -459,7 +463,7 @@ function addCurrentToWatchlist() {
   const l = getWL();
   if (!l.includes(currentTicker)) { l.unshift(currentTicker); saveWL(l); }
   const btn = document.getElementById('add-wl-btn');
-  btn.textContent = '✓ Added'; btn.style.background='rgba(0,255,136,.2)';
+  btn.textContent = ' Added'; btn.style.background='rgba(0,255,136,.2)';
   setTimeout(() => { btn.textContent='+ Add to Watchlist'; btn.style.background=''; }, 2000);
 }
 
@@ -685,7 +689,7 @@ async function loadWatchlist(){
       <div class="wl-right">
         <div class="wl-price">$${s.price.toFixed(2)}</div>
         <div class="wl-pct ${up?'up':'down'}">${up?'+':''}${s.changePct.toFixed(2)}%</div>
-        <button class="wl-rm" onclick="event.stopPropagation();removeFromWL('${s.ticker}')" title="Remove">✕</button>
+        <button class="wl-rm" onclick="event.stopPropagation();removeFromWL('${s.ticker}')" title="Remove"></button>
       </div>
     </div>`;
   }).join('');
