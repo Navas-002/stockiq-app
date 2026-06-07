@@ -4,331 +4,363 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Syndicate — Youth Investor Platform</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23040406'/%3E%3Crect width='32' height='32' rx='7' fill='none' stroke='%2300ff88' stroke-width='1.5' opacity='0.35'/%3E%3Ctext x='6' y='24' font-family='Arial Black,Arial,sans-serif' font-size='21' font-weight='900' fill='%2300ff88'%3E%24%3C/text%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23040406'/%3E%3Crect width='32' height='32' rx='7' fill='none' stroke='%2300ff88' stroke-width='1.5' opacity='0.4'/%3E%3Ctext x='6' y='24' font-family='Arial Black,Arial,sans-serif' font-size='21' font-weight='900' fill='%2300ff88'%3E%24%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,700&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 :root{
-  --bg:#040406;
-  --bg2:#08090e;
-  --surface:#0d0e14;
-  --surface2:#13141c;
-  --surface3:#1a1b26;
-  --border:#1e2030;
-  --border2:#252840;
-  --neon:#00ff88;
-  --neon-dim:rgba(0,255,136,0.12);
-  --neon-glow:rgba(0,255,136,0.06);
-  --red:#ff3b5c;
-  --red-dim:rgba(255,59,92,0.1);
-  --white:#f0f0f5;
-  --white-mid:#9899ab;
-  --white-dim:#4a4b5a;
-  --mono:'JetBrains Mono',monospace;
-  --sans:'Inter',sans-serif;
+  --bg:#f5f4f0;
+  --bg2:#eeece6;
+  --surface:#ffffff;
+  --surface2:#f9f8f4;
+  --border:#e0ddd5;
+  --border2:#c8c5bc;
+  --ink:#0d0d0b;
+  --ink-mid:#4a4840;
+  --ink-dim:#8a8880;
+  --green:#00c96e;
+  --green-dark:#009952;
+  --green-bg:#e8faf1;
+  --green-glow:rgba(0,201,110,0.15);
+  --red:#e8334a;
+  --red-bg:#fdeef0;
+  --gold:#c9a227;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Outfit',sans-serif;
+  --mono:'DM Mono',monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:var(--sans);background:var(--bg);color:var(--white);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 
-/* Subtle noise overlay */
-body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.4}
-
-.app{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 24px 80px}
+/* TICKER TAPE */
+.ticker-tape{background:var(--ink);color:var(--bg);font-family:var(--mono);font-size:11px;padding:6px 0;overflow:hidden;white-space:nowrap}
+.ticker-inner{display:inline-flex;gap:40px;animation:tape 30s linear infinite}
+.ticker-inner span{opacity:.7}.ticker-inner strong{color:var(--green);opacity:1}
+@keyframes tape{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
 /* NAV */
-nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid var(--border);margin-bottom:2px;position:sticky;top:0;background:rgba(4,4,6,.92);backdrop-filter:blur(20px);z-index:100}
-.logo{font-family:var(--mono);font-size:18px;font-weight:700;letter-spacing:-1px;display:flex;align-items:center;gap:8px}
-.logo-icon{width:28px;height:28px;background:var(--neon);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#000;font-weight:800}
-.logo-text{color:var(--white)}
-.logo-text span{color:var(--neon)}
-.nav-links{display:flex;gap:2px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:3px}
-.nav-btn{padding:7px 18px;border:none;background:transparent;color:var(--white-dim);border-radius:7px;cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:500;transition:all .2s;white-space:nowrap}
-.nav-btn:hover{color:var(--white);background:var(--surface2)}
-.nav-btn.active{background:var(--surface3);color:var(--neon);box-shadow:0 0 0 1px var(--border2)}
-.live-pill{display:flex;align-items:center;gap:3px;background:var(--surface);border:1px solid rgba(0,255,136,.2);padding:8px 12px;border-radius:8px;height:34px}
-.live-bar{width:3px;border-radius:2px;background:var(--neon);box-shadow:0 0 6px rgba(0,255,136,.6)}
+nav{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;padding:0 40px}
+.nav-inner{max-width:1140px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo-mark{width:36px;height:36px;background:var(--ink);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-mark svg{width:20px;height:20px}
+.logo-name{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--ink);letter-spacing:-0.5px;font-style:italic}
+.logo-name em{font-style:normal;color:var(--green-dark)}
+.nav-links{display:flex;gap:2px}
+.nav-btn{padding:8px 20px;border:none;background:transparent;color:var(--ink-mid);border-radius:6px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:500;transition:all .2s}
+.nav-btn:hover{color:var(--ink);background:var(--bg2)}
+.nav-btn.active{color:var(--ink);font-weight:700;background:var(--bg)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.live-chip{display:flex;align-items:center;gap:6px;background:var(--green-bg);border:1px solid rgba(0,201,110,.3);padding:5px 12px;border-radius:20px;font-family:var(--mono);font-size:10px;color:var(--green-dark);font-weight:500;letter-spacing:.5px}
+.live-bars{display:flex;align-items:center;gap:2px}
+.live-bar{width:3px;border-radius:2px;background:var(--green)}
 .live-bar:nth-child(1){height:8px;animation:bar 1.2s ease-in-out infinite}
-.live-bar:nth-child(2){height:14px;animation:bar 1.2s ease-in-out infinite .2s}
+.live-bar:nth-child(2){height:13px;animation:bar 1.2s ease-in-out infinite .2s}
 .live-bar:nth-child(3){height:10px;animation:bar 1.2s ease-in-out infinite .4s}
 @keyframes bar{0%,100%{transform:scaleY(.4);opacity:.5}50%{transform:scaleY(1);opacity:1}}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* APP WRAPPER */
+.app{max-width:1140px;margin:0 auto;padding:0 40px 80px}
 
 /* PAGE TRANSITIONS */
-.page{display:none;opacity:0;transform:translateY(12px);transition:opacity .3s ease,transform .3s ease}
-.page.active{display:block;opacity:1;transform:translateY(0)}
-.page.entering{animation:pageIn .3s ease forwards}
-@keyframes pageIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.page{display:none}.page.active{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
 /* HERO */
-.hero{padding:52px 0 36px;position:relative;overflow:hidden}
-.hero-glow{position:absolute;top:-60px;right:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(0,255,136,.05) 0%,transparent 60%);pointer-events:none}
-.hero-tag{display:inline-flex;align-items:center;gap:6px;background:var(--neon-dim);border:1px solid rgba(0,255,136,.2);padding:5px 12px;border-radius:20px;font-family:var(--mono);font-size:10px;color:var(--neon);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:20px}
-.hero h1{font-size:clamp(32px,5vw,56px);font-weight:800;line-height:1.05;letter-spacing:-2px;margin-bottom:18px;color:var(--white)}
-.hero h1 em{font-style:normal;color:var(--neon);text-shadow:0 0 40px rgba(0,255,136,.3)}
-.hero p{font-size:16px;color:var(--white-mid);max-width:500px;line-height:1.7;font-weight:400}
+.hero{padding:64px 0 48px;border-bottom:1px solid var(--border);margin-bottom:48px}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--green-bg);border:1px solid rgba(0,201,110,.25);padding:6px 14px;border-radius:20px;font-family:var(--mono);font-size:10px;color:var(--green-dark);font-weight:500;letter-spacing:1px;text-transform:uppercase;margin-bottom:24px}
+.hero h1{font-family:var(--serif);font-size:clamp(40px,6vw,72px);font-weight:900;line-height:1.0;letter-spacing:-2px;color:var(--ink);margin-bottom:20px;max-width:700px}
+.hero h1 em{font-style:italic;color:var(--green-dark)}
+.hero p{font-size:17px;color:var(--ink-mid);max-width:520px;line-height:1.7;font-weight:400;margin-bottom:32px}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-primary{background:var(--ink);color:white;padding:14px 28px;border-radius:8px;border:none;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:.3px;transition:all .2s;text-transform:uppercase}
+.btn-primary:hover{background:#1a1a18;transform:translateY(-1px);box-shadow:0 6px 20px rgba(13,13,11,.2)}
+.btn-secondary{background:transparent;color:var(--ink);padding:14px 28px;border-radius:8px;border:2px solid var(--ink);cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:.3px;transition:all .2s;text-transform:uppercase}
+.btn-secondary:hover{background:var(--ink);color:white}
+.hero-stats{display:flex;gap:40px;margin-top:40px;padding-top:32px;border-top:1px solid var(--border);flex-wrap:wrap}
+.hero-stat-val{font-family:var(--serif);font-size:32px;font-weight:900;color:var(--ink);line-height:1;letter-spacing:-1px}
+.hero-stat-val em{font-style:normal;color:var(--green-dark)}
+.hero-stat-label{font-size:12px;color:var(--ink-dim);font-weight:500;margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
 
 /* INDEX CARDS */
-.index-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:28px 0}
-.idx-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;transition:all .25s;cursor:default;position:relative;overflow:hidden}
-.idx-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent)}
-.idx-card:hover{border-color:var(--border2);background:var(--surface2)}
-.idx-label{font-family:var(--mono);font-size:9px;color:var(--white-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
-.idx-val{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--white);letter-spacing:-1px}
-.idx-chg{font-family:var(--mono);font-size:11px;margin-top:6px;font-weight:500}
-.idx-chg.up{color:var(--neon)}.idx-chg.down{color:var(--red)}
+.index-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:48px}
+.idx-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;transition:all .2s}
+.idx-card:hover{border-color:var(--border2);box-shadow:0 4px 16px rgba(13,13,11,.06)}
+.idx-label{font-family:var(--mono);font-size:9px;color:var(--ink-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.idx-val{font-family:var(--serif);font-size:26px;font-weight:700;color:var(--ink);letter-spacing:-1px}
+.idx-chg{font-family:var(--mono);font-size:12px;margin-top:6px;font-weight:500}
+.idx-chg.up{color:var(--green-dark)}.idx-chg.down{color:var(--red)}
 
 /* SECTION HEADERS */
-.sec-hd{display:flex;align-items:center;justify-content:space-between;margin:32px 0 14px}
-.sec-title{font-family:var(--mono);font-size:10px;color:var(--white-dim);letter-spacing:3px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
-.sec-title::before{content:'';width:3px;height:12px;background:var(--neon);border-radius:2px;display:inline-block}
-.sec-hint{font-family:var(--mono);font-size:10px;color:var(--white-dim)}
+.sec-hd{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px}
+.sec-title{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--ink);letter-spacing:-0.5px}
+.sec-hint{font-size:13px;color:var(--ink-dim);font-weight:400}
 
 /* MOVERS */
-.movers-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:32px}
-.movers-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
-.movers-hd{padding:12px 18px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;gap:6px}
-.movers-hd.g{color:var(--neon)}.movers-hd.l{color:var(--red)}
-.mover-row{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
-.mover-row:last-child{border-bottom:none}.mover-row:hover{background:var(--surface2)}
-.mover-t{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--white)}
-.mover-p{font-family:var(--mono);font-size:11px;color:var(--white-dim);margin-top:2px}
-.mover-chg{font-family:var(--mono);font-size:13px;font-weight:700}
-.mover-chg.up{color:var(--neon)}.mover-chg.down{color:var(--red)}
+.movers-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:48px}
+.movers-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.movers-hd{padding:14px 20px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.movers-hd.g{color:var(--green-dark);background:var(--green-bg)}
+.movers-hd.l{color:var(--red);background:var(--red-bg)}
+.mover-row{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.mover-row:last-child{border-bottom:none}.mover-row:hover{background:var(--bg2)}
+.mover-t{font-family:var(--serif);font-size:16px;font-weight:700;color:var(--ink);letter-spacing:-0.3px}
+.mover-p{font-family:var(--mono);font-size:11px;color:var(--ink-dim);margin-top:1px}
+.mover-chg{font-family:var(--mono);font-size:13px;font-weight:500;padding:4px 10px;border-radius:20px}
+.mover-chg.up{background:var(--green-bg);color:var(--green-dark)}
+.mover-chg.down{background:var(--red-bg);color:var(--red)}
 
 /* WATCHLIST */
-.wl-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:8px}
-.wl-add{display:flex;gap:8px;margin-bottom:14px}
-.wl-input{flex:1;background:var(--surface);border:1px solid var(--border);color:var(--white);padding:10px 16px;border-radius:10px;font-family:var(--mono);font-size:13px;outline:none;transition:all .2s}
-.wl-input:focus{border-color:var(--neon);box-shadow:0 0 0 3px rgba(0,255,136,.08)}
-.wl-input::placeholder{color:var(--white-dim)}
-.wl-add-btn{background:var(--neon-dim);border:1px solid rgba(0,255,136,.3);color:var(--neon);padding:10px 18px;border-radius:10px;cursor:pointer;font-family:var(--mono);font-size:12px;font-weight:700;transition:all .2s;white-space:nowrap}
-.wl-add-btn:hover{background:var(--neon);color:#000}
-.wl-row{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
-.wl-row:last-child{border-bottom:none}.wl-row:hover{background:var(--surface2)}
-.wl-left{display:flex;align-items:center;gap:12px}
-.wl-ico{width:36px;height:36px;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--neon)}
-.wl-ticker{font-family:var(--mono);font-weight:700;font-size:14px}.wl-co{font-size:11px;color:var(--white-dim);margin-top:2px}
-.wl-right{display:flex;align-items:center;gap:10px}
-.wl-price{font-family:var(--mono);font-size:14px;font-weight:700}
-.wl-pct{font-family:var(--mono);font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
-.wl-pct.up{background:rgba(0,255,136,.1);color:var(--neon);border:1px solid rgba(0,255,136,.15)}
-.wl-pct.down{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,59,92,.15)}
-.wl-rm{background:transparent;border:1px solid var(--border);color:var(--white-dim);width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
-.wl-rm:hover{border-color:var(--red);color:var(--red);background:var(--red-dim)}
-.loading-row{padding:22px;text-align:center;color:var(--white-dim);font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px}
+.wl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:8px}
+.wl-add{display:flex;gap:10px;margin-bottom:16px}
+.wl-input{flex:1;background:var(--surface);border:1px solid var(--border);color:var(--ink);padding:11px 16px;border-radius:8px;font-family:var(--mono);font-size:13px;outline:none;transition:all .2s}
+.wl-input:focus{border-color:var(--ink);box-shadow:0 0 0 3px rgba(13,13,11,.08)}
+.wl-input::placeholder{color:var(--ink-dim)}
+.wl-add-btn{background:var(--ink);border:none;color:white;padding:11px 20px;border-radius:8px;cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:700;transition:all .2s;white-space:nowrap;letter-spacing:.3px}
+.wl-add-btn:hover{background:#1a1a18}
+.wl-row{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.wl-row:last-child{border-bottom:none}.wl-row:hover{background:var(--bg2)}
+.wl-left{display:flex;align-items:center;gap:14px}
+.wl-ico{width:38px;height:38px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:12px;font-weight:700;color:var(--ink)}
+.wl-ticker{font-family:var(--serif);font-weight:700;font-size:16px;letter-spacing:-0.3px}
+.wl-co{font-size:12px;color:var(--ink-dim);margin-top:2px}
+.wl-right{display:flex;align-items:center;gap:12px}
+.wl-price{font-family:var(--mono);font-size:15px;font-weight:500;color:var(--ink)}
+.wl-pct{font-family:var(--mono);font-size:12px;padding:3px 10px;border-radius:20px;font-weight:500}
+.wl-pct.up{background:var(--green-bg);color:var(--green-dark)}
+.wl-pct.down{background:var(--red-bg);color:var(--red)}
+.wl-rm{background:transparent;border:1px solid var(--border);color:var(--ink-dim);width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.wl-rm:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
+.loading-row{padding:24px;text-align:center;color:var(--ink-dim);font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px}
 
 /* SEARCH */
-.search-area{position:relative;margin-bottom:24px}
+.search-area{position:relative;margin-bottom:32px}
 .search-row{display:flex;gap:10px}
-.search-input{flex:1;background:var(--surface);border:1px solid var(--border);color:var(--white);padding:13px 18px;border-radius:12px;font-family:var(--sans);font-size:14px;outline:none;transition:all .2s}
-.search-input:focus{border-color:var(--neon);box-shadow:0 0 0 3px rgba(0,255,136,.08)}
-.search-input::placeholder{color:var(--white-dim)}
-.search-btn{background:var(--neon);border:none;color:#000;padding:13px 28px;border-radius:12px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:700;transition:all .2s;white-space:nowrap}
-.search-btn:hover{background:#00cc6e;transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,255,136,.25)}
-.search-btn:active{transform:translateY(0)}
-.suggestions{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#10111a;border:1px solid var(--border2);border-radius:12px;z-index:200;overflow:hidden;display:none;box-shadow:0 20px 60px rgba(0,0,0,.6)}
-.sug-item{padding:11px 16px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:background .15s;border-bottom:1px solid var(--border)}
-.sug-item:last-child{border-bottom:none}.sug-item:hover{background:var(--surface2)}
-.sug-t{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--neon);width:60px;flex-shrink:0}
-.sug-n{font-size:13px;color:var(--white-mid)}
+.search-input{flex:1;background:var(--surface);border:2px solid var(--border);color:var(--ink);padding:14px 20px;border-radius:10px;font-family:var(--sans);font-size:15px;outline:none;transition:all .2s}
+.search-input:focus{border-color:var(--ink);box-shadow:0 0 0 4px rgba(13,13,11,.06)}
+.search-input::placeholder{color:var(--ink-dim)}
+.search-btn{background:var(--ink);border:none;color:white;padding:14px 28px;border-radius:10px;cursor:pointer;font-family:var(--sans);font-size:14px;font-weight:700;transition:all .2s;white-space:nowrap;letter-spacing:.3px;text-transform:uppercase}
+.search-btn:hover{background:#1a1a18;transform:translateY(-1px);box-shadow:0 6px 20px rgba(13,13,11,.15)}
+.suggestions{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;z-index:200;overflow:hidden;display:none;box-shadow:0 16px 48px rgba(13,13,11,.12)}
+.sug-item{padding:12px 18px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:background .15s;border-bottom:1px solid var(--border)}
+.sug-item:last-child{border-bottom:none}.sug-item:hover{background:var(--bg2)}
+.sug-t{font-family:var(--serif);font-size:14px;font-weight:700;color:var(--green-dark);width:64px;flex-shrink:0}
+.sug-n{font-size:13px;color:var(--ink-mid)}
 
 /* QUICK PICKS */
-.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:28px}
-.quick-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .22s}
-.quick-card:hover{border-color:rgba(0,255,136,.3);background:var(--surface2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,255,136,.06)}
-.q-tag{font-family:var(--mono);font-size:9px;color:var(--neon);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;opacity:.7}
-.q-ticker{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--white)}
-.q-name{font-size:11px;color:var(--white-dim);margin-top:3px}
+.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px}
+.quick-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:all .2s}
+.quick-card:hover{border-color:var(--ink);background:var(--bg2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(13,13,11,.08)}
+.q-tag{font-family:var(--mono);font-size:9px;color:var(--green-dark);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;font-weight:500}
+.q-ticker{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--ink);letter-spacing:-0.3px}
+.q-name{font-size:11px;color:var(--ink-dim);margin-top:3px}
 
 /* STOCK HEADER */
-.stock-hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:16px;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:16px}
-.s-name{font-size:12px;color:var(--white-dim);margin-bottom:4px;font-weight:500}
-.s-ticker{font-family:var(--mono);font-size:28px;font-weight:700;letter-spacing:-1.5px}
-.s-price{font-family:var(--mono);font-size:40px;font-weight:700;letter-spacing:-2px;margin-top:6px;color:var(--white)}
-.s-chg{font-family:var(--mono);font-size:14px;margin-top:5px;font-weight:600}
-.s-chg.up{color:var(--neon)}.s-chg.down{color:var(--red)}
+.stock-hd{background:var(--ink);color:white;border-radius:14px;padding:28px 32px;margin-bottom:20px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:20px}
+.s-name{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:4px;font-weight:500;letter-spacing:.3px;text-transform:uppercase;font-family:var(--mono)}
+.s-ticker{font-family:var(--serif);font-size:32px;font-weight:900;letter-spacing:-1px;color:white}
+.s-price{font-family:var(--mono);font-size:42px;font-weight:500;letter-spacing:-2px;margin-top:8px;color:white}
+.s-chg{font-family:var(--mono);font-size:14px;margin-top:6px;font-weight:500}
+.s-chg.up{color:var(--green)}.s-chg.down{color:#ff6b7a}
 .s-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
-.s-badge{display:inline-block;background:var(--surface2);border:1px solid var(--border2);padding:5px 14px;border-radius:20px;font-size:11px;color:var(--white-mid);font-family:var(--mono);font-weight:500}
-.s-cap{font-family:var(--mono);font-size:12px;color:var(--white-dim)}.s-cap span{color:var(--white);font-weight:700}
-.add-wl-btn{background:var(--neon-dim);border:1px solid rgba(0,255,136,.25);color:var(--neon);padding:8px 16px;border-radius:8px;cursor:pointer;font-family:var(--mono);font-size:11px;font-weight:700;transition:all .2s}
-.add-wl-btn:hover{background:var(--neon);color:#000}
+.s-badge{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);padding:5px 14px;border-radius:20px;font-size:11px;color:rgba(255,255,255,.7);font-family:var(--mono);font-weight:500;letter-spacing:.5px}
+.s-cap{font-family:var(--mono);font-size:12px;color:rgba(255,255,255,.5)}.s-cap span{color:white;font-weight:500}
+.add-wl-btn{background:var(--green);border:none;color:var(--ink);padding:9px 18px;border-radius:8px;cursor:pointer;font-family:var(--sans);font-size:12px;font-weight:700;transition:all .2s;letter-spacing:.3px;text-transform:uppercase}
+.add-wl-btn:hover{background:#00e07a;transform:translateY(-1px)}
 
 /* CHART */
-.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px}
-.chart-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
-.btn-group{display:flex;gap:3px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:3px}
-.tbtn{padding:5px 13px;border-radius:5px;border:none;background:transparent;color:var(--white-dim);cursor:pointer;font-family:var(--mono);font-size:11px;font-weight:600;transition:all .18s}
-.tbtn:hover{color:var(--white)}.tbtn.active{background:var(--surface3);color:var(--neon);box-shadow:0 0 0 1px var(--border2)}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px}
+.chart-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.btn-group{display:flex;gap:3px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:3px}
+.tbtn{padding:6px 14px;border-radius:5px;border:none;background:transparent;color:var(--ink-dim);cursor:pointer;font-family:var(--mono);font-size:11px;font-weight:500;transition:all .18s}
+.tbtn:hover{color:var(--ink)}.tbtn.active{background:var(--surface);color:var(--ink);font-weight:700;box-shadow:0 1px 4px rgba(13,13,11,.1)}
 .ind-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
-.ind{padding:4px 12px;border-radius:20px;font-size:11px;border:1px solid var(--border);background:transparent;color:var(--white-dim);cursor:pointer;transition:all .18s;font-family:var(--mono)}
-.ind:hover{border-color:var(--border2);color:var(--white)}.ind.active{background:rgba(0,255,136,.1);color:var(--neon);border-color:rgba(0,255,136,.25)}
+.ind{padding:5px 12px;border-radius:20px;font-size:11px;border:1px solid var(--border);background:transparent;color:var(--ink-dim);cursor:pointer;transition:all .18s;font-family:var(--mono)}
+.ind:hover{border-color:var(--border2);color:var(--ink)}.ind.active{background:var(--ink);color:white;border-color:var(--ink)}
 .chart-box{position:relative;height:280px}
 
 /* STATS TABLE */
-.stats-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:16px}
-.stats-hd{padding:14px 20px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--white-dim);letter-spacing:3px;text-transform:uppercase;display:flex;align-items:center;gap:6px}
-.stats-hd::before{content:'';width:3px;height:10px;background:var(--neon);border-radius:2px}
+.stats-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px}
+.stats-hd{padding:16px 24px;border-bottom:1px solid var(--border);font-family:var(--serif);font-size:16px;font-weight:700;color:var(--ink);letter-spacing:-0.3px}
 .stats-grid-inner{display:grid;grid-template-columns:1fr 1fr}
-.stat-row{display:flex;justify-content:space-between;align-items:center;padding:11px 20px;border-bottom:1px solid var(--border);transition:background .15s;position:relative}
-.stat-row:hover{background:var(--surface2)}
-.stat-k{font-size:12px;color:var(--white-mid);display:flex;align-items:center;gap:6px;font-weight:400}
-.stat-v{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--white)}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;border-bottom:1px solid var(--border);transition:background .15s;position:relative}
+.stat-row:hover{background:var(--bg2)}
+.stat-k{font-size:13px;color:var(--ink-mid);display:flex;align-items:center;gap:6px;font-weight:400}
+.stat-v{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--ink)}
 
-/* TOOLTIPS - fixed positioning */
+/* TOOLTIPS */
 .tt-wrap{position:relative;display:inline-flex}
-.tt-icon{width:15px;height:15px;background:var(--surface3);border:1px solid var(--border2);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:8px;color:var(--white-dim);cursor:help;font-style:normal;flex-shrink:0;font-family:var(--mono)}
-.tt-box{display:none;position:fixed;width:220px;background:#13141f;border:1px solid rgba(0,255,136,.2);border-radius:10px;padding:12px 14px;font-size:11px;color:var(--white-mid);line-height:1.7;z-index:9999;font-family:var(--sans);box-shadow:0 16px 48px rgba(0,0,0,.8),0 0 0 1px rgba(0,255,136,.05);pointer-events:none}
-.tt-title{font-family:var(--mono);font-size:10px;color:var(--neon);margin-bottom:6px;display:block;font-weight:600}
+.tt-icon{width:16px;height:16px;background:var(--bg2);border:1px solid var(--border);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:9px;color:var(--ink-dim);cursor:help;font-style:normal;flex-shrink:0;font-family:var(--mono)}
+.tt-box{display:none;position:fixed;width:220px;background:var(--ink);border-radius:10px;padding:12px 14px;font-size:11px;color:rgba(255,255,255,.75);line-height:1.7;z-index:9999;font-family:var(--sans);box-shadow:0 16px 48px rgba(13,13,11,.25);pointer-events:none}
+.tt-title{font-family:var(--mono);font-size:10px;color:var(--green);margin-bottom:6px;display:block;font-weight:500}
 .tt-wrap:hover .tt-box{display:block}
 
 /* RISK */
-.risk-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px}
-.risk-card h3{font-family:var(--mono);font-size:9px;color:var(--white-dim);letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:6px}
-.risk-card h3::before{content:'';width:3px;height:10px;background:var(--neon);border-radius:2px}
+.risk-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin-bottom:16px}
+.risk-card h3{font-family:var(--serif);font-size:16px;font-weight:700;color:var(--ink);margin-bottom:16px;letter-spacing:-0.3px}
 .risk-track{display:flex;gap:3px;margin-bottom:10px}
-.risk-seg{flex:1;height:5px;border-radius:3px;background:var(--surface3);transition:background .5s}
-.risk-seg.fl{background:var(--neon)}.risk-seg.fm{background:#ffd60a}.risk-seg.fh{background:var(--red)}
-.risk-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--white-dim)}
-.risk-desc{font-family:var(--mono);font-size:11px;margin-top:12px;font-weight:600}
+.risk-seg{flex:1;height:5px;border-radius:3px;background:var(--bg2);transition:background .5s}
+.risk-seg.fl{background:var(--green)}.risk-seg.fm{background:var(--gold)}.risk-seg.fh{background:var(--red)}
+.risk-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--ink-dim)}
+.risk-desc{font-family:var(--mono);font-size:12px;margin-top:12px;font-weight:500}
 
-/* AI BOX */
-.ai-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px;position:relative;overflow:hidden}
-.ai-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,255,136,.4),transparent)}
-.ai-hd{display:flex;align-items:center;gap:10px;margin-bottom:16px}
-.ai-hd h3{font-family:var(--mono);font-size:9px;color:var(--neon);letter-spacing:3px;text-transform:uppercase;font-weight:700}
-.ai-badge{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.15);color:var(--neon);font-family:var(--mono);font-size:8px;padding:3px 8px;border-radius:4px;letter-spacing:1.5px;font-weight:600}
-.verdict{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:20px;font-family:var(--mono);font-size:11px;font-weight:700;margin-bottom:14px}
-.verdict.buy{background:rgba(0,255,136,.1);color:var(--neon);border:1px solid rgba(0,255,136,.2)}
-.verdict.hold{background:rgba(255,214,10,.08);color:#ffd60a;border:1px solid rgba(255,214,10,.2)}
-.verdict.caution{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,59,92,.2)}
-.ai-text{font-size:14px;line-height:1.85;color:var(--white-mid)}
-.ai-loading{display:flex;align-items:center;gap:10px;color:var(--white-dim);font-size:13px;padding:6px 0}
-.spinner{width:15px;height:15px;border:2px solid var(--surface3);border-top-color:var(--neon);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
-@keyframes spin{to{transform:rotate(360deg)}}
+/* AI CHAT */
+.ai-card{background:var(--ink);border-radius:14px;overflow:hidden;margin-bottom:16px;color:white}
+.ai-hd{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.03)}
+.ai-status-dot{width:8px;height:8px;background:var(--green);border-radius:50%;box-shadow:0 0 8px var(--green);animation:pulse-dot 2s infinite;flex-shrink:0}
+@keyframes pulse-dot{0%,100%{box-shadow:0 0 8px var(--green)}50%{box-shadow:0 0 16px var(--green),0 0 24px rgba(0,201,110,.3)}}
+.ai-hd h3{font-family:var(--serif);font-size:15px;font-weight:700;color:white;letter-spacing:-0.3px}
+.ai-badge{background:rgba(0,201,110,.15);border:1px solid rgba(0,201,110,.25);color:var(--green);font-family:var(--mono);font-size:9px;padding:3px 8px;border-radius:4px;letter-spacing:1px;font-weight:500}
+.ai-clear-btn{margin-left:auto;background:transparent;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.4);padding:4px 12px;border-radius:6px;cursor:pointer;font-family:var(--mono);font-size:10px;transition:all .2s}
+.ai-clear-btn:hover{border-color:rgba(255,100,100,.4);color:rgba(255,100,100,.7)}
+.ai-messages{min-height:100px;max-height:400px;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
+.ai-messages::-webkit-scrollbar{width:4px}
+.ai-messages::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+.ai-msg{display:flex;gap:10px;animation:msgIn .3s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.ai-msg.user{flex-direction:row-reverse}
+.ai-msg-avatar{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:500;flex-shrink:0;margin-top:2px}
+.ai-msg.assistant .ai-msg-avatar{background:rgba(0,201,110,.15);border:1px solid rgba(0,201,110,.2);color:var(--green)}
+.ai-msg.user .ai-msg-avatar{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6)}
+.ai-msg-bubble{max-width:85%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.75}
+.ai-msg.assistant .ai-msg-bubble{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.8);border-radius:4px 12px 12px 12px}
+.ai-msg.user .ai-msg-bubble{background:rgba(0,201,110,.12);border:1px solid rgba(0,201,110,.2);color:rgba(255,255,255,.9);border-radius:12px 4px 12px 12px}
+.ai-verdict-inline{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-family:var(--mono);font-size:10px;font-weight:500;margin-bottom:10px;letter-spacing:.3px}
+.ai-verdict-inline.buy{background:rgba(0,201,110,.15);color:var(--green);border:1px solid rgba(0,201,110,.2)}
+.ai-verdict-inline.hold{background:rgba(201,162,39,.15);color:var(--gold);border:1px solid rgba(201,162,39,.2)}
+.ai-verdict-inline.caution{background:rgba(232,51,74,.15);color:#ff6b7a;border:1px solid rgba(232,51,74,.2)}
+.ai-typing{display:flex;align-items:center;gap:4px;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:4px 12px 12px 12px;width:fit-content}
+.ai-typing span{width:5px;height:5px;background:var(--green);border-radius:50%;animation:typing .9s ease infinite}
+.ai-typing span:nth-child(2){animation-delay:.2s}.ai-typing span:nth-child(3){animation-delay:.4s}
+@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
+.ai-input-row{display:flex;gap:8px;padding:12px 16px;border-top:1px solid rgba(255,255,255,.08)}
+.ai-user-input{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:white;padding:9px 14px;border-radius:8px;font-family:var(--sans);font-size:13px;outline:none;transition:all .2s}
+.ai-user-input:focus{border-color:rgba(0,201,110,.4);background:rgba(255,255,255,.08)}
+.ai-user-input::placeholder{color:rgba(255,255,255,.25)}
+.ai-send-btn{background:var(--green);border:none;color:var(--ink);width:36px;height:36px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.ai-send-btn:hover{background:#00e07a;transform:scale(1.05)}
+.ai-loading{padding:12px 0;display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.4);font-size:13px}
 
 /* NEWS */
-.news-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:16px}
-.news-hd{padding:14px 20px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:9px;color:var(--white-dim);letter-spacing:3px;text-transform:uppercase;display:flex;align-items:center;gap:6px}
-.news-hd::before{content:'';width:3px;height:10px;background:var(--neon);border-radius:2px}
-.news-item{padding:14px 20px;border-bottom:1px solid var(--border);transition:background .15s}
-.news-item:last-child{border-bottom:none}.news-item:hover{background:var(--surface2)}
-.news-item a{color:var(--white);font-size:13px;text-decoration:none;line-height:1.6;display:block;font-weight:500;transition:color .15s}
-.news-item a:hover{color:var(--neon)}.news-meta{font-family:var(--mono);font-size:10px;color:var(--white-dim);margin-top:5px}
+.news-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px}
+.news-hd{padding:16px 24px;border-bottom:1px solid var(--border);font-family:var(--serif);font-size:16px;font-weight:700;color:var(--ink);letter-spacing:-0.3px}
+.news-item{padding:14px 24px;border-bottom:1px solid var(--border);transition:background .15s}
+.news-item:last-child{border-bottom:none}.news-item:hover{background:var(--bg2)}
+.news-item a{color:var(--ink);font-size:13px;text-decoration:none;line-height:1.6;display:block;font-weight:500;transition:color .15s}
+.news-item a:hover{color:var(--green-dark)}.news-meta{font-family:var(--mono);font-size:10px;color:var(--ink-dim);margin-top:5px}
 
 /* DISCLAIMER */
-.disclaimer{background:rgba(255,214,10,.03);border:1px solid rgba(255,214,10,.1);border-radius:12px;padding:14px 18px;font-size:12px;color:rgba(255,214,10,.5);line-height:1.7;margin-bottom:20px}
+.disclaimer{background:#fffbeb;border:1px solid rgba(201,162,39,.2);border-radius:10px;padding:14px 18px;font-size:12px;color:rgba(120,90,0,.7);line-height:1.7;margin-bottom:20px}
 
 /* LEARN */
-.learn-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.learn-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px;transition:all .22s}
-.learn-card:hover{border-color:var(--border2);background:var(--surface2)}
+.learn-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.learn-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;transition:all .22s}
+.learn-card:hover{border-color:var(--border2);box-shadow:0 4px 16px rgba(13,13,11,.06)}
 .learn-card.full{grid-column:1/-1}
-.learn-card h3{font-size:15px;font-weight:700;margin-bottom:10px;color:var(--white);display:flex;align-items:center;gap:8px}
-.learn-card p{font-size:13px;color:var(--white-mid);line-height:1.85}
-.tip{background:rgba(0,255,136,.04);border-left:2px solid var(--neon);padding:10px 14px;border-radius:0 8px 8px 0;font-size:12px;color:var(--white-mid);margin-top:14px;line-height:1.7;font-family:var(--mono)}
+.learn-card h3{font-family:var(--serif);font-size:17px;font-weight:700;margin-bottom:10px;color:var(--ink);letter-spacing:-0.3px}
+.learn-card p{font-size:13px;color:var(--ink-mid);line-height:1.85}
+.tip{background:var(--green-bg);border-left:3px solid var(--green);padding:10px 14px;border-radius:0 8px 8px 0;font-size:12px;color:var(--green-dark);margin-top:14px;line-height:1.7;font-family:var(--mono)}
 .terms-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
-.term-item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;transition:border-color .2s}
-.term-item:hover{border-color:rgba(0,255,136,.2)}
-.term-word{font-family:var(--mono);font-size:10px;color:var(--neon);margin-bottom:5px;font-weight:700;letter-spacing:.5px}
-.term-def{font-size:12px;color:var(--white-mid);line-height:1.6}
+.term-item{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;transition:border-color .2s}
+.term-item:hover{border-color:var(--border2)}
+.term-word{font-family:var(--mono);font-size:10px;color:var(--green-dark);margin-bottom:5px;font-weight:500;letter-spacing:.5px}
+.term-def{font-size:12px;color:var(--ink-mid);line-height:1.6}
 .chart-mini{position:relative;height:160px;margin-top:16px}
 
 /* PAGE HEADER */
-.page-hd{padding:40px 0 22px}
-.page-hd .tag{display:inline-flex;align-items:center;gap:6px;background:var(--neon-dim);border:1px solid rgba(0,255,136,.15);padding:4px 12px;border-radius:20px;font-family:var(--mono);font-size:9px;color:var(--neon);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
-.page-hd h2{font-size:24px;font-weight:800;letter-spacing:-1px;margin-bottom:6px}
-.page-hd p{font-size:14px;color:var(--white-mid);line-height:1.6}
+.page-hd{padding:40px 0 24px}
+.page-hd .tag{display:inline-flex;align-items:center;background:var(--green-bg);border:1px solid rgba(0,201,110,.2);padding:5px 12px;border-radius:20px;font-family:var(--mono);font-size:9px;color:var(--green-dark);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;font-weight:500}
+.page-hd h2{font-family:var(--serif);font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:8px;color:var(--ink)}
+.page-hd p{font-size:14px;color:var(--ink-mid);line-height:1.6}
 
-@media(max-width:640px){
-  .index-grid,.quick-grid,.learn-grid,.stats-grid-inner,.movers-grid{grid-template-columns:1fr 1fr}
-  .learn-card.full{grid-column:auto}.stock-hd{flex-direction:column}.s-right{align-items:flex-start}
-  .hero h1{font-size:30px}.quick-grid{grid-template-columns:1fr 1fr}
-  nav{padding:14px 0}.nav-btn{padding:6px 12px;font-size:12px}
+/* SPINNER */
+.spinner{width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--ink);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:680px){
+  .app,.nav-inner{padding-left:20px;padding-right:20px}
+  nav{padding:0 20px}
+  .index-row,.quick-grid,.learn-grid,.stats-grid-inner,.movers-grid{grid-template-columns:1fr 1fr}
+  .learn-card.full{grid-column:auto}
+  .stock-hd{flex-direction:column}.s-right{align-items:flex-start}
+  .hero h1{font-size:36px}
 }
-
-/* HERO ENHANCEMENTS */
-.hero-tag-wrap{display:flex;align-items:center;gap:2px;margin-bottom:20px}
-.hero-tag-text{font-family:var(--mono);font-size:10px;color:var(--neon);letter-spacing:3px;text-transform:uppercase;background:var(--neon-dim);border:1px solid rgba(0,255,136,.2);padding:5px 12px;border-radius:20px}
-.hero-tag-cursor{font-family:var(--mono);font-size:14px;color:var(--neon);animation:blink-cursor .8s step-end infinite;margin-left:4px}
-@keyframes blink-cursor{0%,100%{opacity:1}50%{opacity:0}}
-.hero-stats-row{display:flex;align-items:center;gap:24px;margin:20px 0 18px;flex-wrap:wrap}
-.hero-stat{display:flex;flex-direction:column;gap:2px}
-.hero-stat-val{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--neon);line-height:1}
-.hero-stat-label{font-family:var(--mono);font-size:9px;color:var(--white-dim);letter-spacing:1px;text-transform:uppercase}
-.hero-stat-div{width:1px;height:28px;background:var(--border2)}
-
-/* AI CHAT */
-.ai-chat-card{padding:0 !important;overflow:hidden}
-.ai-chat-card .ai-hd{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:0;background:rgba(0,255,136,.03)}
-.ai-status-dot{width:8px;height:8px;background:var(--neon);border-radius:50%;box-shadow:0 0 8px var(--neon);flex-shrink:0;animation:pulse-dot 2s infinite}
-@keyframes pulse-dot{0%,100%{box-shadow:0 0 8px var(--neon)}50%{box-shadow:0 0 16px var(--neon),0 0 24px rgba(0,255,136,.3)}}
-.ai-clear-btn{margin-left:auto;background:transparent;border:1px solid var(--border);color:var(--white-dim);padding:4px 12px;border-radius:6px;cursor:pointer;font-family:var(--mono);font-size:10px;transition:all .2s}
-.ai-clear-btn:hover{border-color:var(--red);color:var(--red)}
-.ai-messages{min-height:120px;max-height:420px;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
-.ai-messages::-webkit-scrollbar{width:4px}
-.ai-messages::-webkit-scrollbar-track{background:transparent}
-.ai-messages::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
-.ai-msg{display:flex;gap:10px;animation:msgIn .3s ease}
-@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.ai-msg.user{flex-direction:row-reverse}
-.ai-msg-avatar{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:700;flex-shrink:0;margin-top:2px}
-.ai-msg.assistant .ai-msg-avatar{background:var(--neon-dim);border:1px solid rgba(0,255,136,.2);color:var(--neon)}
-.ai-msg.user .ai-msg-avatar{background:var(--surface3);border:1px solid var(--border2);color:var(--white-mid)}
-.ai-msg-bubble{max-width:85%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.75}
-.ai-msg.assistant .ai-msg-bubble{background:var(--surface2);border:1px solid var(--border);color:var(--white-mid);border-radius:4px 12px 12px 12px}
-.ai-msg.user .ai-msg-bubble{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.15);color:var(--white);border-radius:12px 4px 12px 12px}
-.ai-verdict-inline{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-family:var(--mono);font-size:10px;font-weight:700;margin-bottom:10px}
-.ai-verdict-inline.buy{background:rgba(0,255,136,.1);color:var(--neon);border:1px solid rgba(0,255,136,.2)}
-.ai-verdict-inline.hold{background:rgba(255,214,10,.08);color:#ffd60a;border:1px solid rgba(255,214,10,.2)}
-.ai-verdict-inline.caution{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,59,92,.2)}
-.ai-typing{display:flex;align-items:center;gap:4px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:4px 12px 12px 12px;width:fit-content}
-.ai-typing span{width:5px;height:5px;background:var(--neon);border-radius:50%;animation:typing .9s ease infinite}
-.ai-typing span:nth-child(2){animation-delay:.2s}
-.ai-typing span:nth-child(3){animation-delay:.4s}
-@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
-.ai-input-row{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border);background:rgba(0,0,0,.3)}
-.ai-user-input{flex:1;background:var(--surface);border:1px solid var(--border);color:var(--white);padding:9px 14px;border-radius:8px;font-family:var(--sans);font-size:13px;outline:none;transition:all .2s}
-.ai-user-input:focus{border-color:var(--neon);box-shadow:0 0 0 3px rgba(0,255,136,.06)}
-.ai-user-input::placeholder{color:var(--white-dim)}
-.ai-send-btn{background:var(--neon);border:none;color:#000;width:36px;height:36px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
-.ai-send-btn:hover{background:#00cc6e;transform:scale(1.05)}
-.ai-send-btn:active{transform:scale(.95)}
-.ai-loading{padding:10px 0}
 </style>
 </head>
 <body>
-<div class="app">
-  <nav>
-    <div class="logo"><div class="logo-icon">$</div><div class="logo-text"><span>$</span>YNDICATE</div></div>
+
+<!-- TICKER TAPE -->
+<div class="ticker-tape">
+  <div class="ticker-inner" id="ticker-tape">
+    <span>AAPL</span> <strong id="tt-aapl">—</strong>&nbsp;
+    <span>TSLA</span> <strong id="tt-tsla">—</strong>&nbsp;
+    <span>NVDA</span> <strong id="tt-nvda">—</strong>&nbsp;
+    <span>MSFT</span> <strong id="tt-msft">—</strong>&nbsp;
+    <span>GOOGL</span> <strong id="tt-googl">—</strong>&nbsp;
+    <span>META</span> <strong id="tt-meta">—</strong>&nbsp;
+    <span>AMZN</span> <strong id="tt-amzn">—</strong>&nbsp;
+    <span>AMD</span> <strong id="tt-amd">—</strong>&nbsp;
+    <span>AAPL</span> <strong id="tt-aapl2">—</strong>&nbsp;
+    <span>TSLA</span> <strong id="tt-tsla2">—</strong>&nbsp;
+    <span>NVDA</span> <strong id="tt-nvda2">—</strong>&nbsp;
+    <span>MSFT</span> <strong id="tt-msft2">—</strong>&nbsp;
+    <span>GOOGL</span> <strong id="tt-googl2">—</strong>&nbsp;
+    <span>META</span> <strong id="tt-meta2">—</strong>&nbsp;
+    <span>AMZN</span> <strong id="tt-amzn2">—</strong>&nbsp;
+    <span>AMD</span> <strong id="tt-amd2">—</strong>&nbsp;
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="logo" href="#">
+      <div class="logo-mark">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 2L14 6H11V10H9V6H6L10 2Z" fill="#00ff88"/>
+          <path d="M10 18L6 14H9V10H11V14H14L10 18Z" fill="white" opacity=".6"/>
+          <rect x="4" y="9" width="12" height="2" rx="1" fill="white" opacity=".3"/>
+        </svg>
+      </div>
+      <span class="logo-name"><em>$</em>YNDICATE</span>
+    </a>
     <div class="nav-links">
       <button class="nav-btn active" onclick="showPage('dashboard')">Dashboard</button>
       <button class="nav-btn" onclick="showPage('analyze')">Analyze</button>
       <button class="nav-btn" onclick="showPage('learn')">Learn</button>
     </div>
-    <div class="live-pill"><span class="live-bar"></span><span class="live-bar"></span><span class="live-bar"></span></div>
-  </nav>
+    <div class="nav-right">
+      <div class="live-chip">
+        <div class="live-bars"><div class="live-bar"></div><div class="live-bar"></div><div class="live-bar"></div></div>
+        LIVE
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="app">
 
   <!-- DASHBOARD -->
   <div id="page-dashboard" class="page active">
     <div class="hero">
-      <div class="hero-glow"></div>
-      <div class="hero-tag-wrap">
-        <span class="hero-tag-text" id="hero-tag">YOUTH INVESTOR PLATFORM</span>
-        <span class="hero-tag-cursor">|</span>
+      <div class="hero-eyebrow">Youth Investor Platform</div>
+      <h1>The market<br>is yours to <em>learn.</em></h1>
+      <p>Real-time stock data, AI-powered analysis, and financial education — built for the next generation of investors.</p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="showPage('analyze')">Start Analyzing</button>
+        <button class="btn-secondary" onclick="showPage('learn')">Learn First</button>
       </div>
-      <h1>Learn to invest<br><em>before</em> you invest.</h1>
-      <div class="hero-stats-row">
-        <div class="hero-stat"><span class="hero-stat-val" id="hs-markets">3</span><span class="hero-stat-label">Live Markets</span></div>
-        <div class="hero-stat-div"></div>
-        <div class="hero-stat"><span class="hero-stat-val">AI</span><span class="hero-stat-label">Powered Analysis</span></div>
-        <div class="hero-stat-div"></div>
-        <div class="hero-stat"><span class="hero-stat-val">Free</span><span class="hero-stat-label">Always</span></div>
+      <div class="hero-stats">
+        <div><div class="hero-stat-val"><em>$</em>0</div><div class="hero-stat-label">Cost to Start</div></div>
+        <div><div class="hero-stat-val">Live</div><div class="hero-stat-label">Market Data</div></div>
+        <div><div class="hero-stat-val">AI</div><div class="hero-stat-label">Advisor Built-In</div></div>
+        <div><div class="hero-stat-val">16+</div><div class="hero-stat-label">Ages Served</div></div>
       </div>
-      <p>Real market data. AI-powered analysis. Built for 16-20 year olds who want to understand the stock market before putting real money in.</p>
     </div>
 
-    <div class="index-grid">
+    <div class="index-row">
       <div class="idx-card"><div class="idx-label">S&P 500 · SPY</div><div class="idx-val" id="idx-spy">—</div><div class="idx-chg" id="idx-spy-chg">loading...</div></div>
       <div class="idx-card"><div class="idx-label">NASDAQ · QQQ</div><div class="idx-val" id="idx-qqq">—</div><div class="idx-chg" id="idx-qqq-chg">loading...</div></div>
       <div class="idx-card"><div class="idx-label">Dow Jones · DIA</div><div class="idx-val" id="idx-dia">—</div><div class="idx-chg" id="idx-dia-chg">loading...</div></div>
@@ -348,13 +380,13 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0
 
     <div class="sec-hd">
       <div class="sec-title">My Watchlist</div>
-      <div class="sec-hint">tap any stock to analyze →</div>
+      <div class="sec-hint">tap any to analyze</div>
     </div>
     <div class="wl-add">
       <input class="wl-input" id="wl-add-input" type="text" placeholder="Add any ticker e.g. AAPL, TSLA, VOO..." maxlength="8" oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')addToWatchlist()"/>
       <button class="wl-add-btn" onclick="addToWatchlist()">+ Add</button>
     </div>
-    <div class="wl-card"><div id="stock-list"><div class="loading-row"><div class="spinner"></div>Loading watchlist...</div></div></div>
+    <div class="wl-wrap"><div id="stock-list"><div class="loading-row"><div class="spinner"></div>Loading watchlist...</div></div></div>
   </div>
 
   <!-- ANALYZE -->
@@ -362,12 +394,12 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0
     <div class="page-hd">
       <div class="tag">Stock Analyzer</div>
       <h2>Research any stock</h2>
-      <p>Search any ticker on any exchange — live prices, charts, AI analysis, and beginner-friendly explanations.</p>
+      <p>Search any ticker on any exchange — live data, charts, and AI analysis in seconds.</p>
     </div>
     <div class="search-area">
       <div class="search-row">
         <input id="tickerInput" class="search-input" type="text" placeholder="Any ticker: AAPL, TSLA, NVDA, BRK.B, VOO..." maxlength="8" oninput="onSearchInput(this.value)" onkeydown="if(event.key==='Enter')analyzeStock();if(event.key==='Escape')hideSugg()"/>
-        <button class="search-btn" onclick="analyzeStock()">Analyze →</button>
+        <button class="search-btn" onclick="analyzeStock()">Analyze</button>
       </div>
       <div class="suggestions" id="suggestions"></div>
     </div>
@@ -378,7 +410,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0
         <div class="quick-card" onclick="quickAnalyze('AAPL')"><div class="q-tag">Technology</div><div class="q-ticker">AAPL</div><div class="q-name">Apple Inc.</div></div>
         <div class="quick-card" onclick="quickAnalyze('TSLA')"><div class="q-tag">EV / Energy</div><div class="q-ticker">TSLA</div><div class="q-name">Tesla Inc.</div></div>
         <div class="quick-card" onclick="quickAnalyze('NVDA')"><div class="q-tag">AI / Chips</div><div class="q-ticker">NVDA</div><div class="q-name">NVIDIA Corp.</div></div>
-        <div class="quick-card" onclick="quickAnalyze('AMZN')"><div class="q-tag">Cloud/Retail</div><div class="q-ticker">AMZN</div><div class="q-name">Amazon.com</div></div>
+        <div class="quick-card" onclick="quickAnalyze('AMZN')"><div class="q-tag">Cloud / Retail</div><div class="q-ticker">AMZN</div><div class="q-name">Amazon.com</div></div>
         <div class="quick-card" onclick="quickAnalyze('MSFT')"><div class="q-tag">Cloud / AI</div><div class="q-ticker">MSFT</div><div class="q-name">Microsoft</div></div>
         <div class="quick-card" onclick="quickAnalyze('GOOGL')"><div class="q-tag">Advertising</div><div class="q-ticker">GOOGL</div><div class="q-name">Alphabet Inc.</div></div>
         <div class="quick-card" onclick="quickAnalyze('META')"><div class="q-tag">Social Media</div><div class="q-ticker">META</div><div class="q-name">Meta Platforms</div></div>
@@ -439,20 +471,20 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0
         <div class="risk-desc" id="risk-label"></div>
       </div>
 
-      <div class="ai-card ai-chat-card">
+      <div class="ai-card">
         <div class="ai-hd">
           <div class="ai-status-dot"></div>
           <h3>AI Financial Advisor</h3>
-          <span class="ai-badge">CLAUDE</span>
+          <span class="ai-badge">GROQ</span>
           <button class="ai-clear-btn" onclick="clearChat()">Clear</button>
         </div>
         <div id="ai-messages" class="ai-messages">
-          <div id="ai-loading" class="ai-loading"><div class="spinner"></div>Analyzing live market data...</div>
+          <div class="ai-loading"><div class="spinner" style="border-top-color:var(--green)"></div>Analyzing live market data...</div>
         </div>
         <div class="ai-input-row" id="ai-input-row" style="display:none">
-          <input type="text" id="ai-user-input" class="ai-user-input" placeholder="Ask a follow-up question about this stock..." onkeydown="if(event.key==='Enter')sendChatMessage()"/>
+          <input type="text" id="ai-user-input" class="ai-user-input" placeholder="Ask anything about this stock..." onkeydown="if(event.key==='Enter')sendChatMessage()"/>
           <button class="ai-send-btn" onclick="sendChatMessage()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
           </button>
         </div>
       </div>
@@ -460,7 +492,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0
       <div id="news-section" style="display:none">
         <div class="news-card"><div class="news-hd">Latest News</div><div id="news-list"></div></div>
       </div>
-      <div class="disclaimer">️ StockIQ is for educational purposes only and is not financial advice. Always do your own research and speak with a licensed financial advisor before making investment decisions with real money.</div>
+      <div class="disclaimer">This platform is for educational purposes only and is not financial advice. Always do your own research and consult a licensed financial advisor before making investment decisions.</div>
     </div>
   </div>
 
@@ -472,71 +504,49 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 0
       <p>Everything you need to know before your first trade — explained simply.</p>
     </div>
     <div class="learn-grid">
-      <div class="learn-card"><h3> What is a stock?</h3><p>Buying a stock means buying a small piece of ownership in a company. If the company grows and earns more profit, your piece becomes worth more. If it struggles, it loses value.</p><div class="tip"> Like owning a slice of a pizza shop. If the shop gets popular, your slice is worth more.</div></div>
-      <div class="learn-card"><h3> RSI — Momentum</h3><p>Relative Strength Index measures buying/selling momentum on a scale of 0–100. It tells you whether a stock is being overbought (too much buying) or oversold (too much selling).</p><div class="tip"> RSI above 70 = possibly overbought. Below 30 = possibly oversold. These are signals, not guarantees.</div></div>
-      <div class="learn-card"><h3> Moving Averages</h3><p>SMA smooths out daily price noise to show the real trend. The 20-day shows short-term momentum, the 50-day shows the medium-term direction traders follow.</p><div class="tip"> Price crossing above SMA 50 = often bullish. Crossing below = often bearish.</div></div>
-      <div class="learn-card"><h3> Diversification</h3><p>Never put all your money in one stock. Spread across companies, sectors, and even countries. If one company fails, your whole portfolio doesn't go with it.</p><div class="tip"> A single ETF like VOO gives you 500 companies at once — instant diversification for beginners.</div></div>
-      <div class="learn-card full"><h3>⏳ The power of starting early — Compound Interest</h3><p>Your investment returns earn more returns over time. The earlier you start, the more powerful this effect becomes. Below: $1,000 invested at 8% annual return — starting at age 16 vs 26.</p><div class="chart-mini"><canvas id="compoundChart"></canvas></div></div>
-      <div class="learn-card full"><h3> Essential terms — hover any for a plain English explanation</h3>
+      <div class="learn-card"><h3>What is a stock?</h3><p>Buying a stock means buying a small piece of ownership in a company. If the company grows and earns more profit, your piece becomes worth more.</p><div class="tip">Like owning a slice of a business — if the shop gets popular, your slice is worth more.</div></div>
+      <div class="learn-card"><h3>RSI — Momentum Indicator</h3><p>Relative Strength Index measures buying and selling momentum on a scale of 0 to 100. It tells you whether a stock is overbought or oversold.</p><div class="tip">Above 70 = possibly overbought. Below 30 = possibly oversold. Signals, not guarantees.</div></div>
+      <div class="learn-card"><h3>Moving Averages</h3><p>SMA smooths out daily price noise to reveal the real trend. The 20-day shows short-term momentum, the 50-day shows medium-term direction.</p><div class="tip">Price above SMA 50 = uptrend. Below it = downtrend. Used by professional traders daily.</div></div>
+      <div class="learn-card"><h3>Diversification</h3><p>Never put all your money in one stock. Spreading across companies and sectors reduces risk. If one fails, your whole portfolio does not go with it.</p><div class="tip">A single index fund like VOO gives you 500 companies at once — instant diversification.</div></div>
+      <div class="learn-card full"><h3>The power of starting early — Compound Interest</h3><p>Your investment returns earn more returns over time. Starting at 16 versus 26 can mean hundreds of thousands of dollars difference at retirement — same $1,000, just more time.</p><div class="chart-mini"><canvas id="compoundChart"></canvas></div></div>
+      <div class="learn-card full"><h3>Essential terms</h3>
         <div class="terms-grid">
-          <div class="term-item"><div class="term-word">P/E RATIO</div><div class="term-def">Price divided by earnings per share. The market's grade on how expensive a stock is. Average is ~20-25x.</div></div>
-          <div class="term-item"><div class="term-word">MARKET CAP</div><div class="term-def">Total value of all shares. Small cap &lt;$2B, Mid $2-10B, Large &gt;$10B, Mega &gt;$200B.</div></div>
-          <div class="term-item"><div class="term-word">BETA</div><div class="term-def">How much the stock moves vs the S&P 500. Beta 2.0 = moves twice as wildly as the market.</div></div>
-          <div class="term-item"><div class="term-word">EPS</div><div class="term-def">Earnings Per Share — profit per share of stock. Higher = company is making more money per share.</div></div>
+          <div class="term-item"><div class="term-word">P/E RATIO</div><div class="term-def">Price vs earnings per share. Shows how expensive a stock is relative to its profits. Average is around 20-25x.</div></div>
+          <div class="term-item"><div class="term-word">MARKET CAP</div><div class="term-def">Total value of all shares. Small cap under $2B, Mid $2-10B, Large cap over $10B.</div></div>
+          <div class="term-item"><div class="term-word">BETA</div><div class="term-def">How much the stock moves vs the S&P 500. Beta of 2 means it moves twice as much as the market.</div></div>
+          <div class="term-item"><div class="term-word">EPS</div><div class="term-def">Earnings Per Share — profit the company makes per share of stock outstanding.</div></div>
           <div class="term-item"><div class="term-word">DIVIDEND</div><div class="term-def">Cash paid to you just for holding the stock — like rental income from owning property.</div></div>
-          <div class="term-item"><div class="term-word">52-WEEK RANGE</div><div class="term-def">Highest and lowest price over the past year. Wide range = volatile stock.</div></div>
-          <div class="term-item"><div class="term-word">BULL MARKET</div><div class="term-def">Prices rising 20%+ from a recent low. Optimism is high. Historically lasts longer than bear markets.</div></div>
-          <div class="term-item"><div class="term-word">BEAR MARKET</div><div class="term-def">Prices falling 20%+ from a recent high. Fear is high. Always temporary in history.</div></div>
+          <div class="term-item"><div class="term-word">52-WEEK RANGE</div><div class="term-def">Highest and lowest price over the past year. Wide range means more volatile stock.</div></div>
+          <div class="term-item"><div class="term-word">BULL MARKET</div><div class="term-def">Prices rising 20% or more from a recent low. Optimism is high. Good time to be invested.</div></div>
+          <div class="term-item"><div class="term-word">BEAR MARKET</div><div class="term-def">Prices falling 20% or more from a recent high. Fear is high. Always temporary in history.</div></div>
         </div>
       </div>
     </div>
   </div>
-</div>
+
+</div><!-- /app -->
 
 <script>
 const API = 'https://stock-api-a920.onrender.com';
 const DEFAULT_WL = ['AAPL','TSLA','NVDA','AMZN','MSFT','GOOGL'];
 let currentChart=null, allCandles=[], activeInds={sma20:true,sma50:false,bb:false}, currentType='price', currentRange='1M', currentTicker=null;
+let chatHistory=[], chatStockContext='';
 
-// Smooth page transitions
-function showPage(p) {
-  const pages = document.querySelectorAll('.page');
-  const btns = document.querySelectorAll('.nav-btn');
-  pages.forEach(el => { el.classList.remove('active'); el.style.display='none'; });
-  btns.forEach((b,i) => b.classList.toggle('active', ['dashboard','analyze','learn'][i]===p));
-  const target = document.getElementById('page-'+p);
-  target.style.display = 'block';
-  requestAnimationFrame(() => {
-    target.classList.add('active','entering');
-    setTimeout(() => target.classList.remove('entering'), 350);
-  });
-  if (p==='learn') setTimeout(drawLearnCharts,150);
+function showPage(p){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach((b,i)=>b.classList.toggle('active',['dashboard','analyze','learn'][i]===p));
+  const t=document.getElementById('page-'+p);
+  t.classList.add('active');
+  if(p==='learn')setTimeout(drawLearnCharts,150);
 }
 
-// Watchlist
-function getWL() { try { const s=localStorage.getItem('siq_wl'); return s?JSON.parse(s):[...DEFAULT_WL]; } catch(e) { return [...DEFAULT_WL]; } }
-function saveWL(l) { try { localStorage.setItem('siq_wl',JSON.stringify(l)); } catch(e) {} }
-function addToWatchlist() {
-  const inp = document.getElementById('wl-add-input');
-  const t = inp.value.trim().toUpperCase();
-  if (!t) return;
-  const l = getWL();
-  if (!l.includes(t)) { l.unshift(t); saveWL(l); }
-  inp.value = '';
-  loadWatchlist();
-}
-function removeFromWL(t) { saveWL(getWL().filter(x=>x!==t)); loadWatchlist(); }
-function addCurrentToWatchlist() {
-  if (!currentTicker) return;
-  const l = getWL();
-  if (!l.includes(currentTicker)) { l.unshift(currentTicker); saveWL(l); }
-  const btn = document.getElementById('add-wl-btn');
-  btn.textContent = ' Added'; btn.style.background='rgba(0,255,136,.2)';
-  setTimeout(() => { btn.textContent='+ Add to Watchlist'; btn.style.background=''; }, 2000);
-}
+function getWL(){try{const s=localStorage.getItem('siq_wl');return s?JSON.parse(s):[...DEFAULT_WL];}catch(e){return[...DEFAULT_WL];}}
+function saveWL(l){try{localStorage.setItem('siq_wl',JSON.stringify(l));}catch(e){}}
+function addToWatchlist(){const i=document.getElementById('wl-add-input');const t=i.value.trim().toUpperCase();if(!t)return;const l=getWL();if(!l.includes(t)){l.unshift(t);saveWL(l);}i.value='';loadWatchlist();}
+function removeFromWL(t){saveWL(getWL().filter(x=>x!==t));loadWatchlist();}
+function addCurrentToWatchlist(){if(!currentTicker)return;const l=getWL();if(!l.includes(currentTicker)){l.unshift(currentTicker);saveWL(l);}const btn=document.getElementById('add-wl-btn');btn.textContent='Saved';setTimeout(()=>{btn.textContent='+ Add to Watchlist';},2000);}
 
-// Search suggestions
-const POPULAR = [
+const POPULAR=[
   {t:'AAPL',n:'Apple Inc.'},{t:'MSFT',n:'Microsoft Corp.'},{t:'GOOGL',n:'Alphabet Inc.'},
   {t:'AMZN',n:'Amazon.com'},{t:'TSLA',n:'Tesla Inc.'},{t:'NVDA',n:'NVIDIA Corp.'},
   {t:'META',n:'Meta Platforms'},{t:'BRK.B',n:'Berkshire Hathaway'},{t:'JPM',n:'JPMorgan Chase'},
@@ -547,81 +557,31 @@ const POPULAR = [
   {t:'PYPL',n:'PayPal Holdings'},{t:'INTC',n:'Intel Corp.'},{t:'AMD',n:'Advanced Micro Devices'},
   {t:'QCOM',n:'Qualcomm Inc.'},{t:'CRM',n:'Salesforce Inc.'},{t:'ADBE',n:'Adobe Inc.'},
   {t:'ORCL',n:'Oracle Corp.'},{t:'IBM',n:'IBM Corp.'},{t:'UBER',n:'Uber Technologies'},
-  {t:'LYFT',n:'Lyft Inc.'},{t:'SNAP',n:'Snap Inc.'},{t:'SPOT',n:'Spotify Technology'},
-  {t:'SQ',n:'Block Inc.'},{t:'COIN',n:'Coinbase Global'},{t:'HOOD',n:'Robinhood Markets'},
-  {t:'PLTR',n:'Palantir Technologies'},{t:'GME',n:'GameStop Corp.'},{t:'AMC',n:'AMC Entertainment'},
-  {t:'NKE',n:'Nike Inc.'},{t:'SBUX',n:'Starbucks Corp.'},{t:'MCD',n:"McDonald's Corp."},
-  {t:'WMT',n:'Walmart Inc.'},{t:'TGT',n:'Target Corp.'},{t:'COST',n:'Costco Wholesale'},
-  {t:'SPY',n:'S&P 500 ETF'},{t:'QQQ',n:'NASDAQ 100 ETF'},{t:'VOO',n:'Vanguard S&P 500 ETF'},
-  {t:'VTI',n:'Vanguard Total Market ETF'},{t:'GLD',n:'Gold ETF'},{t:'ARKK',n:'ARK Innovation ETF'},
+  {t:'SNAP',n:'Snap Inc.'},{t:'SPOT',n:'Spotify Technology'},{t:'SQ',n:'Block Inc.'},
+  {t:'COIN',n:'Coinbase Global'},{t:'HOOD',n:'Robinhood Markets'},{t:'PLTR',n:'Palantir Technologies'},
+  {t:'GME',n:'GameStop Corp.'},{t:'NKE',n:'Nike Inc.'},{t:'SBUX',n:'Starbucks Corp.'},
+  {t:'MCD',n:"McDonald's Corp."},{t:'WMT',n:'Walmart Inc.'},{t:'TGT',n:'Target Corp.'},
+  {t:'COST',n:'Costco Wholesale'},{t:'SPY',n:'S&P 500 ETF'},{t:'QQQ',n:'NASDAQ 100 ETF'},
+  {t:'VOO',n:'Vanguard S&P 500 ETF'},{t:'VTI',n:'Vanguard Total Market ETF'},{t:'GLD',n:'Gold ETF'},
 ];
 let sugTO;
-function onSearchInput(val) {
-  clearTimeout(sugTO);
-  val = val.toUpperCase().trim();
-  if (!val) { hideSugg(); return; }
-  sugTO = setTimeout(() => {
-    const m = POPULAR.filter(s=>s.t.startsWith(val)||s.n.toUpperCase().includes(val)).slice(0,6);
-    const box = document.getElementById('suggestions');
-    if (!m.length) { hideSugg(); return; }
-    box.innerHTML = m.map(s=>`<div class="sug-item" onclick="selectSugg('${s.t}')"><span class="sug-t">${s.t}</span><span class="sug-n">${s.n}</span></div>`).join('');
-    box.style.display='block';
-  },120);
-}
-function selectSugg(t) { document.getElementById('tickerInput').value=t; hideSugg(); quickAnalyze(t); }
-function hideSugg() { document.getElementById('suggestions').style.display='none'; }
-document.addEventListener('click', e => { if(!e.target.closest('.search-area')) hideSugg(); });
+function onSearchInput(val){clearTimeout(sugTO);val=val.toUpperCase().trim();if(!val){hideSugg();return;}sugTO=setTimeout(()=>{const m=POPULAR.filter(s=>s.t.startsWith(val)||s.n.toUpperCase().includes(val)).slice(0,6);const box=document.getElementById('suggestions');if(!m.length){hideSugg();return;}box.innerHTML=m.map(s=>`<div class="sug-item" onclick="selectSugg('${s.t}')"><span class="sug-t">${s.t}</span><span class="sug-n">${s.n}</span></div>`).join('');box.style.display='block';},120);}
+function selectSugg(t){document.getElementById('tickerInput').value=t;hideSugg();quickAnalyze(t);}
+function hideSugg(){document.getElementById('suggestions').style.display='none';}
+document.addEventListener('click',e=>{if(!e.target.closest('.search-area'))hideSugg();});
 
-// Tooltip positioning
-document.addEventListener('mouseover', e => {
-  const icon = e.target.closest('.tt-icon');
-  if (!icon) return;
-  const box = icon.parentElement?.querySelector('.tt-box');
-  if (!box) return;
-  const r = icon.getBoundingClientRect();
-  let top = r.top - 10 + window.scrollY;
-  box.style.visibility='hidden'; box.style.display='block';
-  const bh = box.offsetHeight;
-  box.style.display=''; box.style.visibility='';
-  top = r.top - bh - 10 + window.scrollY;
-  if (top < window.scrollY + 10) top = r.bottom + 10 + window.scrollY;
-  let left = r.left + r.width/2 - 110;
-  left = Math.max(10, Math.min(left, window.innerWidth - 230));
-  box.style.top = top + 'px';
-  box.style.left = left + 'px';
-});
+document.addEventListener('mouseover',e=>{const icon=e.target.closest('.tt-icon');if(!icon)return;const box=icon.parentElement?.querySelector('.tt-box');if(!box)return;const r=icon.getBoundingClientRect();box.style.visibility='hidden';box.style.display='block';const bh=box.offsetHeight;box.style.display='';box.style.visibility='';let top=r.top-bh-10+window.scrollY;if(top<window.scrollY+10)top=r.bottom+10+window.scrollY;let left=r.left+r.width/2-110;left=Math.max(10,Math.min(left,window.innerWidth-230));box.style.top=top+'px';box.style.left=left+'px';});
 
-const TOOLTIPS = {
-  'Previous Close':'The last price the stock traded at when the market closed yesterday.',
-  'Open':'The first price the stock traded at when the market opened this morning.',
-  "Day's Range":'The lowest and highest price the stock reached during today\'s session.',
-  '52 Week Range':'The lowest and highest price over the past 52 weeks. Wide range = more volatile stock.',
-  'Volume':'How many shares have been traded today. Higher volume = more investor interest.',
-  'Beta':'How much the stock moves vs the S&P 500. Beta 2 means twice as volatile as the market.',
-  'Profit Margin':'How much of every dollar in revenue the company actually keeps as profit.',
-  'Revenue Growth':'How fast the company\'s sales are growing year over year. Positive = growing business.',
-  'Market Cap':'The total market value of all shares. Shows the company\'s overall size.',
-  'P/E Ratio':'Price divided by annual earnings per share. Shows if a stock is cheap or expensive relative to profits.',
-  'EPS':'Earnings Per Share — how much profit the company makes for each share of stock.',
-  'Forward Dividend':'The annual cash amount paid to shareholders just for holding the stock.',
-  'Debt / Equity':'How much debt the company has vs shareholder equity. Lower is generally safer.',
-  'Return on Equity':'How well the company turns investor money into profit. Higher is better.',
-  '1Y Price Target':'Analyst consensus estimate of where the stock price might be in 12 months.',
-  'Exchange':'The stock exchange where shares are listed and traded.',
-};
-function tt(key) {
-  const text = TOOLTIPS[key];
-  if (!text) return '';
-  return `<span class="tt-wrap"><span class="tt-icon">?</span><span class="tt-box"><span class="tt-title">${key}</span>${text}</span></span>`;
-}
+const TOOLTIPS={'Previous Close':'The last price traded before the market closed yesterday.','Open':'The first price traded when the market opened today.',"Day's Range":'The lowest and highest price hit during today\'s session.','52 Week Range':'Highest and lowest price over the past year. Wide range = more volatile.','Volume':'Shares traded today. Higher = more investor interest.','Beta':'How much the stock moves vs S&P 500. Beta 2 = twice as volatile.','Profit Margin':'Of every dollar earned, how much the company keeps as profit.','Revenue Growth':'How fast sales are growing vs last year. Positive = growing.','Market Cap':'Total value of all shares. Shows the company\'s size.','P/E Ratio':'Price divided by earnings. Shows if a stock is cheap or expensive.','EPS':'Profit per share of stock. Higher = more profitable per share.','Forward Dividend':'Annual cash paid to you per share just for holding the stock.','Debt / Equity':'Debt vs equity. Lower is generally safer for investors.','Return on Equity':'How well the company turns investor money into profit.','1Y Price Target':'Analyst estimate of the stock price in 12 months.','Exchange':'The stock exchange where shares are listed and traded.'};
+function tt(key){const text=TOOLTIPS[key];if(!text)return'';return`<span class="tt-wrap"><span class="tt-icon">?</span><span class="tt-box"><span class="tt-title">${key}</span>${text}</span></span>`;}
 
-async function apiFetch(path) { const r=await fetch(API+path); if(!r.ok) throw new Error(r.status); return r.json(); }
-function sma(d,n){return d.map((v,i)=>i<n-1?null:d.slice(i-n+1,i+1).reduce((a,b)=>a+b,0)/n)}
-function calcRSI(c,p=14){return c.map((v,i)=>{if(i<p)return null;let g=0,l=0;for(let j=i-p+1;j<=i;j++){const d=c[j]-c[j-1];if(d>0)g+=d;else l+=Math.abs(d);}return+(100-100/((1)+(g/p)/((l/p)||1))).toFixed(1);})}
+async function apiFetch(path){const r=await fetch(API+path);if(!r.ok)throw new Error(r.status);return r.json();}
+function sma(d,n){return d.map((v,i)=>i<n-1?null:d.slice(i-n+1,i+1).reduce((a,b)=>a+b,0)/n);}
+function calcRSI(c,p=14){return c.map((v,i)=>{if(i<p)return null;let g=0,l=0;for(let j=i-p+1;j<=i;j++){const d=c[j]-c[j-1];if(d>0)g+=d;else l+=Math.abs(d);}return+(100-100/((1)+(g/p)/((l/p)||1))).toFixed(1);});}
 function calcMACD(c){const k=(d,n)=>{const m=2/(n+1),r=[d[0]];for(let i=1;i<d.length;i++)r.push(d[i]*m+r[i-1]*(1-m));return r;};const e12=k(c,12),e26=k(c,26);const macd=c.map((_,i)=>+(e12[i]-e26[i]).toFixed(3));return{macd,signal:k(macd,9)};}
 function rangeC(c,r){const d=r==='1M'?30:r==='3M'?90:r==='6M'?180:365;return c.slice(-d);}
 
-const CO={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,backgroundColor:'#13141f',titleColor:'#00ff88',bodyColor:'#9899ab',borderColor:'rgba(0,255,136,.2)',borderWidth:1,padding:10,cornerRadius:8}},scales:{x:{ticks:{color:'#4a4b5a',font:{size:10},maxTicksLimit:8},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{color:'#9899ab',font:{size:10}},grid:{color:'rgba(255,255,255,.04)'}}}};
+const CO={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,backgroundColor:'#0d0d0b',titleColor:'#00c96e',bodyColor:'rgba(255,255,255,.6)',borderColor:'rgba(255,255,255,.1)',borderWidth:1,padding:10,cornerRadius:8}},scales:{x:{ticks:{color:'#8a8880',font:{size:10},maxTicksLimit:8},grid:{color:'rgba(13,13,11,.06)'}},y:{ticks:{color:'#4a4840',font:{size:10}},grid:{color:'rgba(13,13,11,.06)'}}}};
 
 function buildChart(c,type){
   const ctx=document.getElementById('stockChart').getContext('2d');
@@ -630,147 +590,135 @@ function buildChart(c,type){
   const labels=c.map(x=>x.date),closes=c.map(x=>x.close),vols=c.map(x=>+(x.volume/1e6).toFixed(2));
   let ds=[];
   if(type==='price'){
-    ds.push({label:'Price',data:closes,borderColor:'#00ff88',borderWidth:2,pointRadius:0,fill:true,backgroundColor:'rgba(0,255,136,.04)',tension:.3});
-    if(activeInds.sma20)ds.push({label:'SMA 20',data:sma(closes,20),borderColor:'#ffd60a',borderWidth:1.5,pointRadius:0,tension:.3});
-    if(activeInds.sma50)ds.push({label:'SMA 50',data:sma(closes,50),borderColor:'#4dabff',borderWidth:1.5,pointRadius:0,tension:.3});
-    if(activeInds.bb){const m=sma(closes,20);const s=closes.map((v,i)=>{if(i<19)return null;const sl=closes.slice(i-19,i+1),mn=sl.reduce((a,b)=>a+b,0)/20;return Math.sqrt(sl.reduce((a,b)=>a+(b-mn)**2,0)/20);});ds.push({label:'BB+',data:m.map((v,i)=>v&&s[i]?+(v+2*s[i]).toFixed(2):null),borderColor:'rgba(255,59,92,.5)',borderWidth:1,pointRadius:0,borderDash:[4,4],tension:.3});ds.push({label:'BB-',data:m.map((v,i)=>v&&s[i]?+(v-2*s[i]).toFixed(2):null),borderColor:'rgba(255,59,92,.5)',borderWidth:1,pointRadius:0,borderDash:[4,4],tension:.3});}
+    ds.push({label:'Price',data:closes,borderColor:'#009952',borderWidth:2,pointRadius:0,fill:true,backgroundColor:'rgba(0,153,82,.06)',tension:.3});
+    if(activeInds.sma20)ds.push({label:'SMA 20',data:sma(closes,20),borderColor:'#c9a227',borderWidth:1.5,pointRadius:0,tension:.3});
+    if(activeInds.sma50)ds.push({label:'SMA 50',data:sma(closes,50),borderColor:'#6b9bd2',borderWidth:1.5,pointRadius:0,tension:.3});
+    if(activeInds.bb){const m=sma(closes,20);const s=closes.map((v,i)=>{if(i<19)return null;const sl=closes.slice(i-19,i+1),mn=sl.reduce((a,b)=>a+b,0)/20;return Math.sqrt(sl.reduce((a,b)=>a+(b-mn)**2,0)/20);});ds.push({label:'BB+',data:m.map((v,i)=>v&&s[i]?+(v+2*s[i]).toFixed(2):null),borderColor:'rgba(232,51,74,.4)',borderWidth:1,pointRadius:0,borderDash:[4,4],tension:.3});ds.push({label:'BB-',data:m.map((v,i)=>v&&s[i]?+(v-2*s[i]).toFixed(2):null),borderColor:'rgba(232,51,74,.4)',borderWidth:1,pointRadius:0,borderDash:[4,4],tension:.3});}
     currentChart=new Chart(ctx,{type:'line',data:{labels,datasets:ds},options:{...CO,scales:{...CO.scales,y:{...CO.scales.y,ticks:{...CO.scales.y.ticks,callback:v=>'$'+v.toFixed(0)}}}}});
-  } else if(type==='volume'){
-    currentChart=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Volume (M)',data:vols,backgroundColor:'rgba(0,255,136,.3)',borderColor:'#00ff88',borderWidth:0,borderRadius:2}]},options:CO});
-  } else if(type==='rsi'){
-    currentChart=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'RSI',data:calcRSI(closes),borderColor:'#ffd60a',borderWidth:2,pointRadius:0,fill:false,tension:.3}]},options:{...CO,scales:{...CO.scales,y:{min:0,max:100,ticks:{color:'#9899ab',font:{size:10},callback:v=>v===70?'70 OB':v===30?'30 OS':v},grid:{color:(ctx)=>ctx.tick.value===70||ctx.tick.value===30?'rgba(255,59,92,.2)':'rgba(255,255,255,.04)'}}}}});
-  } else if(type==='macd'){
-    const {macd,signal}=calcMACD(closes);
-    currentChart=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'MACD',data:macd,borderColor:'#00ff88',borderWidth:2,pointRadius:0,fill:false,tension:.3},{label:'Signal',data:signal,borderColor:'#ff3b5c',borderWidth:1.5,pointRadius:0,fill:false,tension:.3}]},options:{...CO,plugins:{...CO.plugins,legend:{display:true,labels:{color:'#9899ab',font:{size:11},boxWidth:10,padding:14}}}}});
+  }else if(type==='volume'){
+    currentChart=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Volume (M)',data:vols,backgroundColor:'rgba(0,153,82,.3)',borderColor:'#009952',borderWidth:0,borderRadius:2}]},options:CO});
+  }else if(type==='rsi'){
+    currentChart=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'RSI',data:calcRSI(closes),borderColor:'#c9a227',borderWidth:2,pointRadius:0,fill:false,tension:.3}]},options:{...CO,scales:{...CO.scales,y:{min:0,max:100,ticks:{color:'#4a4840',font:{size:10},callback:v=>v===70?'70 OB':v===30?'30 OS':v},grid:{color:(ctx)=>ctx.tick.value===70||ctx.tick.value===30?'rgba(232,51,74,.15)':'rgba(13,13,11,.06)'}}}}});
+  }else if(type==='macd'){
+    const{macd,signal}=calcMACD(closes);
+    currentChart=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'MACD',data:macd,borderColor:'#009952',borderWidth:2,pointRadius:0,fill:false,tension:.3},{label:'Signal',data:signal,borderColor:'#e8334a',borderWidth:1.5,pointRadius:0,fill:false,tension:.3}]},options:{...CO,plugins:{...CO.plugins,legend:{display:true,labels:{color:'#4a4840',font:{size:11},boxWidth:10,padding:14}}}}});
   }
 }
 
-function setRange(r,btn){currentRange=r;document.querySelectorAll('.time-btns .tbtn, .btn-group .tbtn').forEach(b=>{if(['1M','3M','6M','1Y'].includes(b.textContent))b.classList.remove('active')});btn.classList.add('active');if(allCandles.length)buildChart(rangeC(allCandles,r),currentType);}
-function setChartType(t,btn){currentType=t;const btns=document.querySelectorAll('.chart-card .btn-group .tbtn');btns.forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(allCandles.length)buildChart(rangeC(allCandles,currentRange),t);}
+function setRange(r,btn){currentRange=r;btn.closest('.btn-group').querySelectorAll('.tbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(allCandles.length)buildChart(rangeC(allCandles,r),currentType);}
+function setChartType(t,btn){currentType=t;btn.closest('.btn-group').querySelectorAll('.tbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(allCandles.length)buildChart(rangeC(allCandles,currentRange),t);}
 function toggleInd(el,k){activeInds[k]=!activeInds[k];el.classList.toggle('active',activeInds[k]);if(allCandles.length&&currentType==='price')buildChart(rangeC(allCandles,currentRange),'price');}
 
-function buildStatsTable(stock) {
-  const left = [
-    ["Previous Close", stock.prevClose?'$'+stock.prevClose.toFixed(2):'—'],
-    ["Open", stock.open?'$'+stock.open.toFixed(2):'—'],
-    ["Day's Range", stock.low&&stock.high?`$${stock.low.toFixed(2)} – $${stock.high.toFixed(2)}`:'—'],
-    ["52 Week Range", stock.low52&&stock.high52?`$${(+stock.low52).toFixed(2)} – $${(+stock.high52).toFixed(2)}`:'—'],
-    ["Volume", stock.volume?(+stock.volume).toLocaleString():'—'],
-    ["Beta", stock.beta?(+stock.beta).toFixed(2):'—'],
-    ["Profit Margin", stock.profitMargin?(+stock.profitMargin).toFixed(2)+'%':'—'],
-    ["Revenue Growth", stock.revenueGrowth?(+stock.revenueGrowth).toFixed(2)+'%':'—'],
-  ];
-  const right = [
-    ["Market Cap", stock.marketCap||'—'],
-    ["P/E Ratio", stock.pe?(+stock.pe).toFixed(2):'—'],
-    ["EPS", stock.eps?'$'+(+stock.eps).toFixed(2):'—'],
-    ["Forward Dividend", stock.dividend||'—'],
-    ["Debt / Equity", stock.debtEquity?(+stock.debtEquity).toFixed(2):'—'],
-    ["Return on Equity", stock.roe?(+stock.roe).toFixed(2)+'%':'—'],
-    ["1Y Price Target", stock.priceTarget||'—'],
-    ["Exchange", stock.exchange||'—'],
-  ];
+function buildStatsTable(stock){
+  const left=[["Previous Close",stock.prevClose?'$'+stock.prevClose.toFixed(2):'—'],["Open",stock.open?'$'+stock.open.toFixed(2):'—'],["Day's Range",stock.low&&stock.high?`$${stock.low.toFixed(2)} – $${stock.high.toFixed(2)}`:'—'],["52 Week Range",stock.low52&&stock.high52?`$${(+stock.low52).toFixed(2)} – $${(+stock.high52).toFixed(2)}`:'—'],["Volume",stock.volume?(+stock.volume).toLocaleString():'—'],["Beta",stock.beta?(+stock.beta).toFixed(2):'—'],["Profit Margin",stock.profitMargin?(+stock.profitMargin).toFixed(2)+'%':'—'],["Revenue Growth",stock.revenueGrowth?(+stock.revenueGrowth).toFixed(2)+'%':'—']];
+  const right=[["Market Cap",stock.marketCap||'—'],["P/E Ratio",stock.pe?(+stock.pe).toFixed(2):'—'],["EPS",stock.eps?'$'+(+stock.eps).toFixed(2):'—'],["Forward Dividend",stock.dividend||'—'],["Debt / Equity",stock.debtEquity?(+stock.debtEquity).toFixed(2):'—'],["Return on Equity",stock.roe?(+stock.roe).toFixed(2)+'%':'—'],["1Y Price Target",stock.priceTarget||'—'],["Exchange",stock.exchange||'—']];
   const render=rows=>rows.map(([k,v])=>`<div class="stat-row"><div class="stat-k">${k}${tt(k)}</div><div class="stat-v">${v}</div></div>`).join('');
   document.getElementById('stats-col-left').innerHTML=render(left);
   document.getElementById('stats-col-right').innerHTML=render(right);
 }
 
 function buildRisk(pct,sector){
-  let r=50;
-  if(Math.abs(pct)>3)r+=20;else if(Math.abs(pct)>1.5)r+=10;
+  let r=50;if(Math.abs(pct)>3)r+=20;else if(Math.abs(pct)>1.5)r+=10;
   if(sector&&['Electric','Biotech','Crypto','Cannabis'].some(s=>sector.includes(s)))r+=15;
   if(sector&&['Technology','Consumer Staples','Utilities'].some(s=>sector.includes(s)))r-=10;
   r=Math.min(95,Math.max(15,r));
   const segs=10,filled=Math.round((r/100)*segs);
-  document.getElementById('risk-scale').innerHTML=Array.from({length:segs},(_,i)=>{
-    const cls=i<filled?(i<4?'fl':i<7?'fm':'fh'):'';
-    return`<div class="risk-seg ${cls}"></div>`;
-  }).join('');
+  document.getElementById('risk-scale').innerHTML=Array.from({length:segs},(_,i)=>{const cls=i<filled?(i<4?'fl':i<7?'fm':'fh'):'';return`<div class="risk-seg ${cls}"></div>`;}).join('');
   const rl=document.getElementById('risk-label');
-  rl.textContent=r<40?'● Lower Risk — relatively stable compared to most stocks':r<65?'● Moderate Risk — normal volatility, expect regular ups and downs':'● Higher Risk — significant price swings are likely';
-  rl.style.color=r<40?'var(--neon)':r<65?'#ffd60a':'var(--red)';
+  rl.textContent=r<40?'Lower Risk — relatively stable compared to most stocks':r<65?'Moderate Risk — normal volatility, expect regular ups and downs':'Higher Risk — significant price swings are likely';
+  rl.style.color=r<40?'var(--green-dark)':r<65?'var(--gold)':'var(--red)';
 }
+
+// Chat system
+function appendAIMessage(role,text,verdict=null,verdictText=null){
+  const msgs=document.getElementById('ai-messages');
+  const typing=msgs.querySelector('.ai-typing-wrap');if(typing)typing.remove();
+  const wrap=document.createElement('div');wrap.className='ai-msg '+role;
+  const avatar=role==='assistant'?'AI':'YOU';
+  let bubble='';
+  if(verdict&&role==='assistant')bubble+=`<div class="ai-verdict-inline ${verdict}">${verdictText}</div><br>`;
+  bubble+=text.replace(/\n/g,'<br>');
+  wrap.innerHTML=`<div class="ai-msg-avatar">${avatar}</div><div class="ai-msg-bubble">${bubble}</div>`;
+  msgs.appendChild(wrap);msgs.scrollTop=msgs.scrollHeight;
+}
+function showTyping(){
+  const msgs=document.getElementById('ai-messages');
+  const wrap=document.createElement('div');wrap.className='ai-msg assistant ai-typing-wrap';
+  wrap.innerHTML=`<div class="ai-msg-avatar">AI</div><div class="ai-typing"><span></span><span></span><span></span></div>`;
+  msgs.appendChild(wrap);msgs.scrollTop=msgs.scrollHeight;
+}
+async function callAI(messages){
+  const res=await fetch(API+'/ai/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:`You are a friendly expert financial coach helping teenagers aged 16-20 learn about investing. You are analyzing ${chatStockContext}. Keep answers concise (2-4 sentences), plain English, no jargon. Educate rather than give direct buy/sell advice. Be encouraging and conversational.`,messages})});
+  const data=await res.json();if(data.error)throw new Error(data.error);return data.text||'Sorry, could not generate a response.';
+}
+async function sendChatMessage(){
+  const input=document.getElementById('ai-user-input');const text=input.value.trim();if(!text)return;
+  input.value='';input.disabled=true;
+  appendAIMessage('user',text);chatHistory.push({role:'user',content:text});showTyping();
+  try{const reply=await callAI(chatHistory);chatHistory.push({role:'assistant',content:reply});appendAIMessage('assistant',reply);}
+  catch(e){const msgs=document.getElementById('ai-messages');const typing=msgs.querySelector('.ai-typing-wrap');if(typing)typing.remove();appendAIMessage('assistant','Sorry, something went wrong. Try again in a moment.');}
+  input.disabled=false;input.focus();
+}
+function clearChat(){chatHistory=[];const msgs=document.getElementById('ai-messages');msgs.innerHTML='<div style="color:rgba(255,255,255,.3);font-size:13px;padding:10px 0;font-family:var(--mono)">Chat cleared. Analyze a stock to start a new conversation.</div>';document.getElementById('ai-input-row').style.display='none';}
 
 async function analyzeStock(){hideSugg();const t=document.getElementById('tickerInput').value.trim().toUpperCase();if(t)quickAnalyze(t);}
 
 async function quickAnalyze(ticker){
-  hideSugg();
-  currentTicker = ticker;
-  chatHistory = [];
-  chatStockContext = ticker;
-  document.getElementById('tickerInput').value = ticker;
-  document.getElementById('analyze-placeholder').style.display = 'none';
-  document.getElementById('analyze-result').style.display = '';
-  // Reset AI chat
-  const msgs = document.getElementById('ai-messages');
-  msgs.innerHTML = '<div class="ai-loading"><div class="spinner"></div>Analyzing live market data...</div>';
-  document.getElementById('ai-input-row').style.display = 'none';
-  document.getElementById('news-section').style.display = 'none';
-  document.getElementById('res-ticker').textContent = ticker;
-  document.getElementById('res-co-name').textContent = 'Loading...';
-  document.getElementById('res-price').textContent = '—';
-  document.getElementById('res-change').textContent = '';
-  document.getElementById('res-cap').textContent = '—';
-  document.getElementById('res-sector').textContent = '—';
-  document.getElementById('add-wl-btn').textContent = '+ Add to Watchlist';
-  document.getElementById('add-wl-btn').style.background = '';
-  allCandles = [];
+  hideSugg();currentTicker=ticker;chatHistory=[];chatStockContext=ticker;
+  document.getElementById('tickerInput').value=ticker;
+  document.getElementById('analyze-placeholder').style.display='none';
+  document.getElementById('analyze-result').style.display='';
+  const msgs=document.getElementById('ai-messages');
+  msgs.innerHTML='<div class="ai-loading"><div class="spinner" style="border-top-color:var(--green)"></div>Analyzing live market data...</div>';
+  document.getElementById('ai-input-row').style.display='none';
+  document.getElementById('news-section').style.display='none';
+  document.getElementById('res-ticker').textContent=ticker;
+  document.getElementById('res-co-name').textContent='Loading...';
+  document.getElementById('res-price').textContent='—';
+  document.getElementById('res-change').textContent='';
+  document.getElementById('res-cap').textContent='—';
+  document.getElementById('res-sector').textContent='—';
+  document.getElementById('add-wl-btn').textContent='+ Add to Watchlist';
+  allCandles=[];
   try{
     const[stock,history]=await Promise.all([apiFetch(`/stock/${ticker}`),apiFetch(`/stock/${ticker}/history?days=365`)]);
-    document.getElementById('res-co-name').textContent = stock.name; chatStockContext = `${ticker} (${stock.name}), current price $${stock.price.toFixed(2)}, sector ${stock.sector||'unknown'}, market cap ${stock.marketCap||'unknown'}`;
+    document.getElementById('res-co-name').textContent=stock.name;
     document.getElementById('res-ticker').textContent=ticker;
     document.getElementById('res-price').textContent='$'+stock.price.toFixed(2);
+    chatStockContext=`${ticker} (${stock.name}), price $${stock.price.toFixed(2)}, change ${stock.changePct.toFixed(2)}%, sector ${stock.sector||'unknown'}, market cap ${stock.marketCap||'unknown'}`;
     const up=stock.change>=0;
     const ce=document.getElementById('res-change');
     ce.textContent=(up?'▲ +':'▼ ')+Math.abs(stock.change).toFixed(2)+' ('+Math.abs(stock.changePct).toFixed(2)+'%) today';
     ce.className='s-chg '+(up?'up':'down');
     document.getElementById('res-cap').textContent=stock.marketCap||'—';
     document.getElementById('res-sector').textContent=stock.sector||'Unknown';
-    buildStatsTable(stock);
-    buildRisk(stock.changePct,stock.sector);
+    buildStatsTable(stock);buildRisk(stock.changePct,stock.sector);
     if(history.candles&&history.candles.length){allCandles=history.candles;buildChart(rangeC(allCandles,currentRange),currentType);}
     try{const news=await apiFetch(`/stock/${ticker}/news`);if(news.articles&&news.articles.length){document.getElementById('news-section').style.display='';document.getElementById('news-list').innerHTML=news.articles.map(a=>`<div class="news-item"><a href="${a.url}" target="_blank">${a.headline}</a><div class="news-meta">${a.source} · ${a.datetime}</div></div>`).join('');}}catch(e){}
-    const verdict = stock.changePct > 1.5 ? 'buy' : stock.changePct < -1.5 ? 'caution' : 'hold';
-    const verdictText = verdict === 'buy' ? '▲ Momentum Up' : verdict === 'caution' ? '▼ Pulling Back' : '● Relatively Stable';
-    const prompt = `You are a friendly financial coach for teenagers 16-20 learning to invest. Analyze ${ticker} (${stock.name}): Price $${stock.price.toFixed(2)}, change ${stock.changePct.toFixed(2)}%, sector ${stock.sector||'unknown'}, market cap ${stock.marketCap||'unknown'}. Write 3-4 clear sentences: what the company does, whether today's move is notable, ONE key risk. End with an educational takeaway. No jargon. No direct buy/sell.`;
-    chatHistory = [{role: 'user', content: prompt}];
-    try {
-      const initMsg = await callClaude(chatHistory);
-      chatHistory.push({role: 'assistant', content: initMsg});
-      const msgs = document.getElementById('ai-messages');
-      msgs.innerHTML = '';
-      appendAIMessage('assistant', initMsg, verdict, verdictText);
-      document.getElementById('ai-input-row').style.display = 'flex';
-    } catch(e) {
-      document.getElementById('ai-messages').innerHTML = '<div style="color:var(--red);font-size:13px;padding:10px 0">AI analysis unavailable. API may be warming up.</div>';
-    }
-  } catch(err) {
-    document.getElementById('res-co-name').textContent = 'Could not load ' + ticker;
-    document.getElementById('ai-messages').innerHTML = '<div style="color:var(--red);font-size:13px;padding:10px 0">Could not load data. API may be warming up — try again in 30 seconds.</div>';
+    const verdict=stock.changePct>1.5?'buy':stock.changePct<-1.5?'caution':'hold';
+    const verdictText=verdict==='buy'?'Momentum Up':verdict==='caution'?'Pulling Back':'Relatively Stable';
+    const prompt=`Analyze ${ticker} (${stock.name}): Price $${stock.price.toFixed(2)}, change ${stock.changePct.toFixed(2)}%, sector ${stock.sector||'unknown'}, market cap ${stock.marketCap||'unknown'}. Write 3-4 clear sentences: what the company does, whether today's move is notable, ONE key risk. End with an educational takeaway. No jargon. No direct buy/sell.`;
+    chatHistory=[{role:'user',content:prompt}];
+    try{
+      const initMsg=await callAI(chatHistory);
+      chatHistory.push({role:'assistant',content:initMsg});
+      msgs.innerHTML='';
+      appendAIMessage('assistant',initMsg,verdict,verdictText);
+      document.getElementById('ai-input-row').style.display='flex';
+    }catch(e){msgs.innerHTML='<div style="color:rgba(255,150,100,.7);font-size:13px;padding:10px 0">AI analysis unavailable. Try again in a moment.</div>';}
+  }catch(err){
+    document.getElementById('res-co-name').textContent='Could not load '+ticker;
+    msgs.innerHTML='<div style="color:rgba(255,150,100,.7);font-size:13px;padding:10px 0">Could not load data. API may be warming up — try again in 30 seconds.</div>';
   }
 }
 
 async function loadWatchlist(){
-  const list=getWL();
-  const el=document.getElementById('stock-list');
+  const list=getWL();const el=document.getElementById('stock-list');
   el.innerHTML='<div class="loading-row"><div class="spinner"></div>Loading...</div>';
   const stocks=await Promise.all(list.map(t=>apiFetch(`/stock/${t}`).catch(()=>null)));
   const valid=stocks.filter(Boolean);
   if(!valid.length){el.innerHTML='<div class="loading-row">No stocks yet — add one above!</div>';return;}
-  el.innerHTML=valid.map(s=>{
-    const up=s.change>=0;
-    return`<div class="wl-row">
-      <div class="wl-left" onclick="showPage('analyze');quickAnalyze('${s.ticker}')">
-        <div class="wl-ico">${s.ticker.slice(0,2)}</div>
-        <div><div class="wl-ticker">${s.ticker}</div><div class="wl-co">${s.name}</div></div>
-      </div>
-      <div class="wl-right">
-        <div class="wl-price">$${s.price.toFixed(2)}</div>
-        <div class="wl-pct ${up?'up':'down'}">${up?'+':''}${s.changePct.toFixed(2)}%</div>
-        <button class="wl-rm" onclick="event.stopPropagation();removeFromWL('${s.ticker}')" title="Remove"></button>
-      </div>
-    </div>`;
-  }).join('');
+  el.innerHTML=valid.map(s=>{const up=s.change>=0;return`<div class="wl-row"><div class="wl-left" onclick="showPage('analyze');quickAnalyze('${s.ticker}')"><div class="wl-ico">${s.ticker.slice(0,2)}</div><div><div class="wl-ticker">${s.ticker}</div><div class="wl-co">${s.name}</div></div></div><div class="wl-right"><div class="wl-price">$${s.price.toFixed(2)}</div><div class="wl-pct ${up?'up':'down'}">${up?'+':''}${s.changePct.toFixed(2)}%</div><button class="wl-rm" onclick="event.stopPropagation();removeFromWL('${s.ticker}')" title="Remove">✕</button></div></div>`;}).join('');
 }
 
 async function loadMovers(){
@@ -778,137 +726,25 @@ async function loadMovers(){
     const data=await apiFetch('/market/movers');
     document.getElementById('gainers-list').innerHTML=(data.gainers||[]).map(s=>`<div class="mover-row" onclick="showPage('analyze');quickAnalyze('${s.ticker}')"><div><div class="mover-t">${s.ticker}</div><div class="mover-p">$${s.price.toFixed(2)}</div></div><div class="mover-chg up">+${Math.abs(s.changePct).toFixed(2)}%</div></div>`).join('')||'<div class="loading-row">No data</div>';
     document.getElementById('losers-list').innerHTML=(data.losers||[]).map(s=>`<div class="mover-row" onclick="showPage('analyze');quickAnalyze('${s.ticker}')"><div><div class="mover-t">${s.ticker}</div><div class="mover-p">$${s.price.toFixed(2)}</div></div><div class="mover-chg down">-${Math.abs(s.changePct).toFixed(2)}%</div></div>`).join('')||'<div class="loading-row">No data</div>';
-  }catch(e){
-    document.getElementById('gainers-list').innerHTML='<div class="loading-row">API warming up...</div>';
-    document.getElementById('losers-list').innerHTML='<div class="loading-row">API warming up...</div>';
-  }
+  }catch(e){document.getElementById('gainers-list').innerHTML='<div class="loading-row">API warming up...</div>';document.getElementById('losers-list').innerHTML='<div class="loading-row">API warming up...</div>';}
 }
 
 async function initDashboard(){
-  loadMovers();
-  loadWatchlist();
+  loadMovers();loadWatchlist();
   for(const[id,ticker]of[['spy','SPY'],['qqq','QQQ'],['dia','DIA']]){
-    try{
-      const s=await apiFetch(`/stock/${ticker}`);
-      document.getElementById(`idx-${id}`).textContent='$'+s.price.toFixed(2);
-      const el=document.getElementById(`idx-${id}-chg`);
-      const up=s.change>=0;
-      el.textContent=(up?'▲ +':'▼ ')+Math.abs(s.changePct).toFixed(2)+'% today';
-      el.className='idx-chg '+(up?'up':'down');
-    }catch(e){}
+    try{const s=await apiFetch(`/stock/${ticker}`);document.getElementById(`idx-${id}`).textContent='$'+s.price.toFixed(2);const el=document.getElementById(`idx-${id}-chg`);const up=s.change>=0;el.textContent=(up?'▲ +':'▼ ')+Math.abs(s.changePct).toFixed(2)+'% today';el.className='idx-chg '+(up?'up':'down');}catch(e){}
+  }
+  // Ticker tape
+  const tickers=['AAPL','TSLA','NVDA','MSFT','GOOGL','META','AMZN','AMD'];
+  for(const t of tickers){
+    try{const s=await apiFetch(`/stock/${t}`);const up=s.change>=0;const txt=`$${s.price.toFixed(2)} ${up?'▲':' ▼'}${Math.abs(s.changePct).toFixed(2)}%`;const id=t.toLowerCase();const el=document.getElementById('tt-'+id);const el2=document.getElementById('tt-'+id+'2');if(el){el.textContent=txt;el.style.color=up?'#00ff88':'#ff6b7a';}if(el2){el2.textContent=txt;el2.style.color=up?'#00ff88':'#ff6b7a';}}catch(e){}
   }
 }
 
 function drawLearnCharts(){
   const ctx=document.getElementById('compoundChart')?.getContext('2d');
-  if(ctx&&!ctx._done){
-    ctx._done=true;
-    new Chart(ctx,{type:'line',data:{labels:Array.from({length:40},(_,i)=>2024+i),datasets:[{label:'Start at 16',data:Array.from({length:40},(_,i)=>Math.round(1000*Math.pow(1.08,i))),borderColor:'#00ff88',borderWidth:2,pointRadius:0,fill:true,backgroundColor:'rgba(0,255,136,.05)',tension:.3},{label:'Start at 26',data:Array.from({length:40},(_,i)=>i<10?null:Math.round(1000*Math.pow(1.08,i-10))),borderColor:'#ff3b5c',borderWidth:2,pointRadius:0,borderDash:[5,4],fill:false,tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:'#9899ab',font:{size:11},boxWidth:10,padding:14}}},scales:{x:{ticks:{color:'#4a4b5a',font:{size:10},maxTicksLimit:6},grid:{color:'rgba(255,255,255,.04)'}},y:{ticks:{color:'#9899ab',font:{size:10},callback:v=>'$'+v.toLocaleString()},grid:{color:'rgba(255,255,255,.04)'}}}}});
-  }
+  if(ctx&&!ctx._done){ctx._done=true;new Chart(ctx,{type:'line',data:{labels:Array.from({length:40},(_,i)=>2024+i),datasets:[{label:'Start at 16',data:Array.from({length:40},(_,i)=>Math.round(1000*Math.pow(1.08,i))),borderColor:'#009952',borderWidth:2,pointRadius:0,fill:true,backgroundColor:'rgba(0,153,82,.06)',tension:.3},{label:'Start at 26',data:Array.from({length:40},(_,i)=>i<10?null:Math.round(1000*Math.pow(1.08,i-10))),borderColor:'#e8334a',borderWidth:2,pointRadius:0,borderDash:[5,4],fill:false,tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:'#4a4840',font:{size:11},boxWidth:10,padding:14}}},scales:{x:{ticks:{color:'#8a8880',font:{size:10},maxTicksLimit:6},grid:{color:'rgba(13,13,11,.06)'}},y:{ticks:{color:'#4a4840',font:{size:10},callback:v=>'$'+v.toLocaleString()},grid:{color:'rgba(13,13,11,.06)'}}}}});}
 }
-
-
-// ── CHAT SYSTEM ──────────────────────────────────────────
-let chatHistory = [];
-let chatStockContext = '';
-
-function appendAIMessage(role, text, verdict=null, verdictText=null) {
-  const msgs = document.getElementById('ai-messages');
-  // Remove typing indicator if present
-  const typing = msgs.querySelector('.ai-typing-wrap');
-  if (typing) typing.remove();
-
-  const wrap = document.createElement('div');
-  wrap.className = 'ai-msg ' + role;
-  const avatar = role === 'assistant' ? 'AI' : 'YOU';
-  let bubbleContent = '';
-  if (verdict && role === 'assistant') {
-    bubbleContent += `<div class="ai-verdict-inline ${verdict}">${verdictText}</div><br>`;
-  }
-  bubbleContent += text.replace(/\n/g, '<br>');
-  wrap.innerHTML = `<div class="ai-msg-avatar">${avatar}</div><div class="ai-msg-bubble">${bubbleContent}</div>`;
-  msgs.appendChild(wrap);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-function showTyping() {
-  const msgs = document.getElementById('ai-messages');
-  const wrap = document.createElement('div');
-  wrap.className = 'ai-msg assistant ai-typing-wrap';
-  wrap.innerHTML = `<div class="ai-msg-avatar">AI</div><div class="ai-typing"><span></span><span></span><span></span></div>`;
-  msgs.appendChild(wrap);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-async function callClaude(messages) {
-  const res = await fetch(API + '/ai/chat', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      system: `You are a friendly expert financial coach helping teenagers aged 16-20 learn about investing. You are analyzing ${chatStockContext}. Keep answers concise (2-4 sentences max), plain English, no jargon. Educate rather than give direct buy/sell advice. Be encouraging and conversational.`,
-      messages
-    })
-  });
-  const data = await res.json();
-  if (data.error) throw new Error(data.error);
-  return data.text || 'Sorry, could not generate a response.';
-}
-
-async function sendChatMessage() {
-  const input = document.getElementById('ai-user-input');
-  const text = input.value.trim();
-  if (!text) return;
-  input.value = '';
-  input.disabled = true;
-
-  appendAIMessage('user', text);
-  chatHistory.push({role: 'user', content: text});
-  showTyping();
-
-  try {
-    const reply = await callClaude(chatHistory);
-    chatHistory.push({role: 'assistant', content: reply});
-    appendAIMessage('assistant', reply);
-  } catch(e) {
-    const msgs = document.getElementById('ai-messages');
-    const typing = msgs.querySelector('.ai-typing-wrap');
-    if (typing) typing.remove();
-    appendAIMessage('assistant', 'Sorry, something went wrong. Try again in a moment.');
-  }
-  input.disabled = false;
-  input.focus();
-}
-
-function clearChat() {
-  chatHistory = [];
-  const msgs = document.getElementById('ai-messages');
-  msgs.innerHTML = '<div class="ai-loading" style="color:var(--white-dim);font-size:13px;padding:12px 0">Chat cleared. Analyze a stock to start a new conversation.</div>';
-  document.getElementById('ai-input-row').style.display = 'none';
-}
-
-// ── HERO TYPEWRITER ───────────────────────────────────────
-const HERO_PHRASES = [
-  'YOUTH INVESTOR PLATFORM',
-  'LEARN BEFORE YOU EARN',
-  'REAL DATA. REAL ANALYSIS.',
-  'YOUR EDGE IN THE MARKET',
-];
-let phraseIdx = 0, charIdx = 0, deleting = false;
-function typeHero() {
-  const el = document.getElementById('hero-tag');
-  if (!el) return;
-  const phrase = HERO_PHRASES[phraseIdx];
-  if (!deleting) {
-    el.textContent = phrase.slice(0, ++charIdx);
-    if (charIdx === phrase.length) { deleting = true; setTimeout(typeHero, 2200); return; }
-    setTimeout(typeHero, 60);
-  } else {
-    el.textContent = phrase.slice(0, --charIdx);
-    if (charIdx === 0) { deleting = false; phraseIdx = (phraseIdx + 1) % HERO_PHRASES.length; setTimeout(typeHero, 300); return; }
-    setTimeout(typeHero, 35);
-  }
-}
-setTimeout(typeHero, 800);
 
 initDashboard();
 </script>
