@@ -841,18 +841,17 @@ function showTyping() {
 }
 
 async function callClaude(messages) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch(API + '/ai/chat', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1024,
-      system: `You are a friendly, expert financial coach helping teenagers aged 16-20 learn about investing. You are currently analyzing ${chatStockContext}. Keep answers concise (2-4 sentences), avoid jargon, and always educate rather than give direct buy/sell advice. Be conversational and encouraging.`,
+      system: `You are a friendly expert financial coach helping teenagers aged 16-20 learn about investing. You are analyzing ${chatStockContext}. Keep answers concise (2-4 sentences max), plain English, no jargon. Educate rather than give direct buy/sell advice. Be encouraging and conversational.`,
       messages
     })
   });
   const data = await res.json();
-  return data.content?.map(c => c.text || '').join('') || 'Sorry, I could not generate a response right now.';
+  if (data.error) throw new Error(data.error);
+  return data.text || 'Sorry, could not generate a response.';
 }
 
 async function sendChatMessage() {
