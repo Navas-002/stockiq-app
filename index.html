@@ -379,6 +379,26 @@ nav{display:none}
   .index-row,.quick-grid,.movers-grid,.learn-modules{grid-template-columns:1fr 1fr}
   .stats-grid-inner{grid-template-columns:1fr}
 }
+
+/* ── BREADCRUMB & BACK BUTTONS ───────────── */
+.page-nav-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.page-back-btn{background:transparent;border:1px solid var(--border);color:var(--ink-mid);padding:7px 14px;border-radius:8px;cursor:pointer;font-family:var(--mono);font-size:11px;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.page-back-btn:hover{border-color:var(--ink-mid);color:var(--ink);background:var(--bg2)}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--ink-dim)}
+.bc-link{cursor:pointer;transition:color .15s}.bc-link:hover{color:var(--green)}
+.bc-sep{color:var(--border2)}
+.bc-current{color:var(--ink);font-weight:500}
+
+/* Back to top floating button */
+.back-to-top{position:fixed;bottom:28px;right:28px;width:40px;height:40px;background:var(--surface);border:1px solid var(--border);color:var(--ink-mid);border-radius:10px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:500;opacity:0;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.back-to-top.visible{opacity:1;pointer-events:all}
+.back-to-top:hover{border-color:var(--green);color:var(--green);transform:translateY(-2px)}
+
+/* History nav buttons in sidenav */
+.snav-history{display:flex;gap:4px;padding:8px 10px 4px}
+.snav-hist-btn{background:transparent;border:1px solid var(--border);color:var(--ink-dim);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.snav-hist-btn:hover{border-color:var(--border2);color:var(--ink)}
+.snav-hist-btn:disabled{opacity:.3;cursor:default}
 </style>
 </head>
 <body>
@@ -511,6 +531,10 @@ nav{display:none}
     </div>
 
     <div id="analyze-result" style="display:none">
+      <div class="page-nav-row">
+        <button class="page-back-btn" onclick="showAnalyzePlaceholder()">← Back to Search</button>
+        <div class="breadcrumb"><span onclick="showPage('dashboard')" class="bc-link">Dashboard</span><span class="bc-sep">›</span><span onclick="showPage('analyze')" class="bc-link">Analyze</span><span class="bc-sep">›</span><span class="bc-current" id="bc-ticker">—</span></div>
+      </div>
       <div class="stock-hd">
         <div>
           <div class="s-name" id="res-co-name">—</div>
@@ -660,13 +684,29 @@ const DEFAULT_WL = ['AAPL','TSLA','NVDA','AMZN','MSFT','GOOGL'];
 let currentChart=null, allCandles=[], activeInds={sma20:true,sma50:false,bb:false}, currentType='price', currentRange='1M', currentTicker=null;
 let chatHistory=[], chatStockContext='';
 
-function showPage(p){
+// Page history
+let pageHistory=[], histIdx=-1;
+function showPage(p, addToHistory=true){
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.snav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===p));
   const t=document.getElementById('page-'+p);
   t.classList.add('active');
   if(p==='learn'){document.getElementById('learn-home').style.display='';document.getElementById('learn-panel').style.display='none';}
+  if(addToHistory){
+    pageHistory=pageHistory.slice(0,histIdx+1);
+    pageHistory.push(p);
+    histIdx=pageHistory.length-1;
+    updateHistBtns();
+  }
   window.scrollTo(0,0);
+}
+function historyBack(){if(histIdx>0){histIdx--;showPage(pageHistory[histIdx],false);updateHistBtns();}}
+function historyFwd(){if(histIdx<pageHistory.length-1){histIdx++;showPage(pageHistory[histIdx],false);updateHistBtns();}}
+function updateHistBtns(){const b=document.getElementById('nav-back');const f=document.getElementById('nav-fwd');if(b)b.disabled=histIdx<=0;if(f)f.disabled=histIdx>=pageHistory.length-1;}
+function showAnalyzePlaceholder(){
+  document.getElementById('analyze-result').style.display='none';
+  document.getElementById('analyze-placeholder').style.display='';
+  document.getElementById('tickerInput').value='';
 }
 
 const MODULES=[
@@ -823,7 +863,7 @@ async function quickAnalyze(ticker){
   msgs.innerHTML='<div class="ai-loading"><div class="spinner" style="border-top-color:var(--green)"></div>Analyzing live market data...</div>';
   document.getElementById('ai-input-row').style.display='none';
   document.getElementById('news-section').style.display='none';
-  document.getElementById('res-ticker').textContent=ticker;
+  document.getElementById('res-ticker').textContent=ticker; const bc=document.getElementById('bc-ticker');if(bc)bc.textContent=ticker;
   document.getElementById('res-co-name').textContent='Loading...';
   document.getElementById('res-price').textContent='—';
   document.getElementById('res-change').textContent='';
@@ -897,9 +937,12 @@ function drawLearnCharts(){
   if(ctx&&!ctx._done){ctx._done=true;new Chart(ctx,{type:'line',data:{labels:Array.from({length:40},(_,i)=>2024+i),datasets:[{label:'Start at 16',data:Array.from({length:40},(_,i)=>Math.round(1000*Math.pow(1.08,i))),borderColor:'#009952',borderWidth:2,pointRadius:0,fill:true,backgroundColor:'rgba(0,153,82,.06)',tension:.3},{label:'Start at 26',data:Array.from({length:40},(_,i)=>i<10?null:Math.round(1000*Math.pow(1.08,i-10))),borderColor:'#e8334a',borderWidth:2,pointRadius:0,borderDash:[5,4],fill:false,tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:'#4a4840',font:{size:11},boxWidth:10,padding:14}}},scales:{x:{ticks:{color:'#8a8880',font:{size:10},maxTicksLimit:6},grid:{color:'rgba(13,13,11,.06)'}},y:{ticks:{color:'#4a4840',font:{size:10},callback:v=>'$'+v.toLocaleString()},grid:{color:'rgba(13,13,11,.06)'}}}}});}
 }
 
+// Back to top
+window.addEventListener('scroll',()=>{const btn=document.getElementById('back-to-top');if(btn)btn.classList.toggle('visible',window.scrollY>400);});
+
 // Market status
 const now=new Date();const h=now.getHours(),d=now.getDay();const isOpen=d>=1&&d<=5&&h>=9&&h<16;const dot=document.getElementById('market-dot');const txt=document.getElementById('market-status-text');if(dot&&txt){dot.style.background=isOpen?'var(--green)':'#ff4d6a';dot.style.boxShadow=isOpen?'0 0 6px var(--green)':'0 0 6px #ff4d6a';txt.textContent=isOpen?'Market Open':'Market Closed';}
-initDashboard();
+showPage("dashboard"); initDashboard();
 </script>
 </body>
 </html>
