@@ -404,6 +404,28 @@ nav{display:none}
 .home-btn .snav-icon{color:var(--bg) !important}
 .home-btn .snav-label{color:var(--bg) !important}
 .home-btn:hover{background:var(--green-dark) !important;transform:none}
+
+/* ── SMOOTH PAGE TRANSITIONS ─────────────── */
+.page{transition:opacity .15s ease, transform .15s ease}
+.page.active{animation:pageSlideIn .25s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes pageSlideIn{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Nav back/fwd button tooltip */
+.snav-hist-btn{position:relative}
+.snav-hist-btn:disabled{opacity:.25;cursor:not-allowed}
+
+/* Breadcrumb hover states */
+.bc-link{padding:2px 4px;border-radius:4px;transition:all .15s}
+.bc-link:hover{background:var(--bg2);color:var(--green)}
+
+/* Analyze result slide-in */
+#analyze-result{animation:pageSlideIn .25s cubic-bezier(.4,0,.2,1)}
+
+/* Keyboard shortcut hint */
+.nav-hint{font-family:var(--mono);font-size:9px;color:var(--ink-dim);padding:6px 14px;opacity:.5;letter-spacing:.5px}
 </style>
 </head>
 <body>
@@ -538,7 +560,7 @@ nav{display:none}
     <div id="analyze-result" style="display:none">
       <div class="page-nav-row">
         <div style="display:flex;gap:8px;align-items:center">
-          <button class="page-back-btn" onclick="showPage('dashboard')" style="background:var(--green);border-color:var(--green);color:var(--bg);font-weight:700">⌂ Dashboard</button>
+          <button class="page-back-btn" onclick="goHome()" style="background:var(--green);border-color:var(--green);color:var(--bg);font-weight:700">⌂ Dashboard</button>
           <button class="page-back-btn" onclick="showAnalyzePlaceholder()">← Back to Search</button>
         </div>
         <div class="breadcrumb"><span onclick="showPage('dashboard')" class="bc-link">Dashboard</span><span class="bc-sep">›</span><span onclick="showPage('analyze')" class="bc-link">Analyze</span><span class="bc-sep">›</span><span class="bc-current" id="bc-ticker">—</span></div>
@@ -692,30 +714,118 @@ const DEFAULT_WL = ['AAPL','TSLA','NVDA','AMZN','MSFT','GOOGL'];
 let currentChart=null, allCandles=[], activeInds={sma20:true,sma50:false,bb:false}, currentType='price', currentRange='1M', currentTicker=null;
 let chatHistory=[], chatStockContext='';
 
-// Page history
-let pageHistory=[], histIdx=-1;
-function showPage(p, addToHistory=true){
-  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.snav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===p));
-  const t=document.getElementById('page-'+p);
-  t.classList.add('active');
-  if(p==='learn'){document.getElementById('learn-home').style.display='';document.getElementById('learn-panel').style.display='none';}
-  if(addToHistory){
-    pageHistory=pageHistory.slice(0,histIdx+1);
-    pageHistory.push(p);
-    histIdx=pageHistory.length-1;
-    updateHistBtns();
+// ── NAVIGATION SYSTEM ────────────────────────────────────
+// State stack — each entry is {page, substate}
+let navStack = [{page:'dashboard', sub:null}];
+let navIdx = 0;
+
+function showPage(p, sub=null, addToHistory=true) {
+  // Animate out current page
+  const current = document.querySelector('.page.active');
+  if (current) {
+    current.style.opacity = '0';
+    current.style.transform = 'translateY(6px)';
   }
-  window.scrollTo(0,0);
+
+  setTimeout(() => {
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(el => {
+      el.classList.remove('active');
+      el.style.opacity = '';
+      el.style.transform = '';
+    });
+
+    // Update sidenav active state
+    document.querySelectorAll('.snav-btn[data-page]').forEach(b => {
+      b.classList.toggle('active', b.dataset.page === p);
+    });
+
+    // Show target page
+    const target = document.getElementById('page-' + p);
+    if (target) target.classList.add('active');
+
+    // Handle sub-states
+    if (p === 'learn') {
+      if (sub === 'module') {
+        // stay on panel
+      } else {
+        document.getElementById('learn-home').style.display = '';
+        document.getElementById('learn-panel').style.display = 'none';
+      }
+    }
+    if (p === 'analyze') {
+      if (sub === 'result') {
+        document.getElementById('analyze-result').style.display = '';
+        document.getElementById('analyze-placeholder').style.display = 'none';
+      } else if (sub === null || sub === 'search') {
+        document.getElementById('analyze-result').style.display = 'none';
+        document.getElementById('analyze-placeholder').style.display = '';
+      }
+    }
+
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }, current ? 120 : 0);
+
+  // Push to nav stack
+  if (addToHistory) {
+    navStack = navStack.slice(0, navIdx + 1);
+    navStack.push({page: p, sub});
+    navIdx = navStack.length - 1;
+  }
+  updateNavBtns();
 }
-function historyBack(){if(histIdx>0){histIdx--;showPage(pageHistory[histIdx],false);updateHistBtns();}}
-function historyFwd(){if(histIdx<pageHistory.length-1){histIdx++;showPage(pageHistory[histIdx],false);updateHistBtns();}}
-function updateHistBtns(){const b=document.getElementById('nav-back');const f=document.getElementById('nav-fwd');if(b)b.disabled=histIdx<=0;if(f)f.disabled=histIdx>=pageHistory.length-1;}
-function showAnalyzePlaceholder(){
-  document.getElementById('analyze-result').style.display='none';
-  document.getElementById('analyze-placeholder').style.display='';
-  document.getElementById('tickerInput').value='';
+
+function navBack() {
+  if (navIdx <= 0) return;
+
+  // Smart back — if on analyze result, go back to search first
+  const cur = navStack[navIdx];
+  if (cur.page === 'analyze' && cur.sub === 'result') {
+    showPage('analyze', 'search', false);
+    navStack[navIdx] = {page:'analyze', sub:'search'};
+    updateNavBtns();
+    return;
+  }
+  // If on learn module, go back to learn home first
+  if (cur.page === 'learn' && cur.sub === 'module') {
+    showPage('learn', null, false);
+    navStack[navIdx] = {page:'learn', sub:null};
+    updateNavBtns();
+    return;
+  }
+
+  navIdx--;
+  const prev = navStack[navIdx];
+  showPage(prev.page, prev.sub, false);
 }
+
+function navFwd() {
+  if (navIdx >= navStack.length - 1) return;
+  navIdx++;
+  const next = navStack[navIdx];
+  showPage(next.page, next.sub, false);
+}
+
+function updateNavBtns() {
+  const b = document.getElementById('nav-back');
+  const f = document.getElementById('nav-fwd');
+  if (b) b.disabled = navIdx <= 0;
+  if (f) f.disabled = navIdx >= navStack.length - 1;
+}
+
+function goHome() {
+  showPage('dashboard');
+}
+
+function showAnalyzePlaceholder() {
+  showPage('analyze', 'search');
+}
+
+// Keyboard navigation — arrow keys with Alt
+document.addEventListener('keydown', e => {
+  if (e.altKey && e.key === 'ArrowLeft') { e.preventDefault(); navBack(); }
+  if (e.altKey && e.key === 'ArrowRight') { e.preventDefault(); navFwd(); }
+});
 
 const MODULES=[
   {title:'What is a Stock?',tag:'01 — BASICS',content:`<h3>What is a Stock?</h3><p>When you buy a stock, you are buying a small piece of ownership in a company — called a share. If the company grows, earns more money, and becomes more valuable, your share becomes worth more too. If it struggles, your share loses value.</p><p>Companies sell shares to raise money to expand their business. You become a part-owner — a shareholder — with a stake in the company's future success.</p><div class="tip">Think of it like owning a slice of a pizza shop. If the shop gets popular and starts making more money, your slice of the business is worth more too.</div>`},
@@ -732,11 +842,15 @@ function openModule(i){
   document.getElementById('learn-panel').style.display='';
   document.getElementById('learn-panel-content').innerHTML=`<div style="font-family:var(--mono);font-size:9px;color:var(--green);letter-spacing:2px;margin-bottom:4px">${m.tag}</div>${m.content}`;
   if(i===4)setTimeout(drawLearnCharts,100);
-  window.scrollTo(0,0);
+  // Push module state to nav
+  navStack = navStack.slice(0, navIdx + 1);
+  navStack.push({page:'learn', sub:'module', moduleIdx:i});
+  navIdx = navStack.length - 1;
+  updateNavBtns();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 function closeModule(){
-  document.getElementById('learn-home').style.display='';
-  document.getElementById('learn-panel').style.display='none';
+  showPage('learn', null);
 }
 
 function getWL(){try{const s=localStorage.getItem('siq_wl');return s?JSON.parse(s):[...DEFAULT_WL];}catch(e){return[...DEFAULT_WL];}}
@@ -865,8 +979,8 @@ async function analyzeStock(){hideSugg();const t=document.getElementById('ticker
 async function quickAnalyze(ticker){
   hideSugg();currentTicker=ticker;chatHistory=[];chatStockContext=ticker;
   document.getElementById('tickerInput').value=ticker;
-  document.getElementById('analyze-placeholder').style.display='none';
-  document.getElementById('analyze-result').style.display='';
+  // Navigate to analyze result state
+  showPage('analyze', 'result', true);
   const msgs=document.getElementById('ai-messages');
   msgs.innerHTML='<div class="ai-loading"><div class="spinner" style="border-top-color:var(--green)"></div>Analyzing live market data...</div>';
   document.getElementById('ai-input-row').style.display='none';
@@ -948,9 +1062,12 @@ function drawLearnCharts(){
 // Back to top
 window.addEventListener('scroll',()=>{const btn=document.getElementById('back-to-top');if(btn)btn.classList.toggle('visible',window.scrollY>400);});
 
+// Init nav
+showPage('dashboard', null, true);
+
 // Market status
 const now=new Date();const h=now.getHours(),d=now.getDay();const isOpen=d>=1&&d<=5&&h>=9&&h<16;const dot=document.getElementById('market-dot');const txt=document.getElementById('market-status-text');if(dot&&txt){dot.style.background=isOpen?'var(--green)':'#ff4d6a';dot.style.boxShadow=isOpen?'0 0 6px var(--green)':'0 0 6px #ff4d6a';txt.textContent=isOpen?'Market Open':'Market Closed';}
-showPage("dashboard"); initDashboard();
+initDashboard();
 </script>
 </body>
 </html>
