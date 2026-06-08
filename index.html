@@ -287,6 +287,98 @@ nav{background:var(--surface);border-bottom:1px solid var(--border);position:sti
   .stock-hd{flex-direction:column}.s-right{align-items:flex-start}
   .hero h1{font-size:36px}
 }
+
+/* ── LAYOUT ───────────────────────────────── */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:58px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200}
+.layout{display:flex;min-height:calc(100vh - 58px)}
+
+/* ── SIDE NAV ─────────────────────────────── */
+.sidenav{width:200px;background:var(--surface);border-right:1px solid var(--border);padding:16px 10px;display:flex;flex-direction:column;gap:4px;position:sticky;top:58px;height:calc(100vh - 58px);flex-shrink:0}
+.snav-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;border:none;background:transparent;color:var(--ink-mid);border-radius:10px;cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:500;transition:all .2s;width:100%;text-align:left;position:relative}
+.snav-btn:hover{background:var(--bg2);color:var(--ink)}
+.snav-btn.active{background:var(--bg2);color:var(--ink)}
+.snav-btn.active .snav-icon{color:var(--green)}
+.snav-btn.active .snav-label{color:var(--ink);font-weight:700}
+.snav-indicator{position:absolute;right:8px;width:6px;height:6px;border-radius:50%;background:var(--green);opacity:0;transition:opacity .2s}
+.snav-btn.active .snav-indicator{opacity:1;box-shadow:0 0 8px var(--green)}
+.snav-icon{color:var(--ink-dim);flex-shrink:0;transition:color .2s;display:flex;align-items:center}
+.snav-label{flex:1}
+.snav-divider{height:1px;background:var(--border);margin:8px 4px}
+.snav-market-status{display:flex;align-items:center;gap:8px;padding:8px 14px;font-family:var(--mono);font-size:10px;color:var(--ink-dim);letter-spacing:.5px}
+.snav-ms-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse-dot 2s infinite}
+
+/* ── LIVE ORB ─────────────────────────────── */
+.live-orb{position:relative;width:52px;height:52px;display:flex;align-items:center;justify-content:flex-end;flex-direction:column;gap:2px;cursor:default}
+.orb-core{width:28px;height:28px;border-radius:50%;background:rgba(0,232,138,.1);border:1px solid rgba(0,232,138,.3);display:flex;align-items:center;justify-content:center;position:relative;z-index:3}
+.orb-bars{display:flex;align-items:center;gap:2px}
+.orb-bar{width:2px;border-radius:1px;background:var(--green)}
+.orb-bar:nth-child(1){height:5px;animation:orb-bar 1s ease-in-out infinite}
+.orb-bar:nth-child(2){height:9px;animation:orb-bar 1s ease-in-out infinite .15s}
+.orb-bar:nth-child(3){height:12px;animation:orb-bar 1s ease-in-out infinite .3s}
+.orb-bar:nth-child(4){height:9px;animation:orb-bar 1s ease-in-out infinite .45s}
+.orb-bar:nth-child(5){height:5px;animation:orb-bar 1s ease-in-out infinite .6s}
+@keyframes orb-bar{0%,100%{transform:scaleY(.4);opacity:.4}50%{transform:scaleY(1);opacity:1}}
+.orb-ring{position:absolute;border-radius:50%;border:1px solid rgba(0,232,138,.15);top:50%;left:50%;transform:translate(-50%,-50%);animation:orb-ring 3s ease-out infinite}
+.orb-ring-1{width:28px;height:28px;animation-delay:0s}
+.orb-ring-2{width:28px;height:28px;animation-delay:1s}
+.orb-ring-3{width:28px;height:28px;animation-delay:2s}
+@keyframes orb-ring{0%{width:28px;height:28px;opacity:.8}100%{width:52px;height:52px;opacity:0}}
+.orb-label{font-family:var(--mono);font-size:8px;color:var(--green);letter-spacing:2px;font-weight:500;position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);white-space:nowrap}
+
+/* ── LEARN TAB REDESIGN ───────────────────── */
+.learn-hero{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:24px;position:relative;overflow:hidden}
+.learn-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(0,232,138,.06) 0%,transparent 70%);pointer-events:none}
+.learn-hero-tag{font-family:var(--mono);font-size:9px;color:var(--green);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;font-weight:500}
+.learn-hero h2{font-family:var(--serif);font-size:28px;font-weight:900;letter-spacing:-1px;margin-bottom:8px;color:var(--ink)}
+.learn-hero p{font-size:14px;color:var(--ink-mid);line-height:1.7;max-width:500px}
+.learn-progress{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
+.learn-prog-item{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-family:var(--mono);font-size:10px;color:var(--ink-dim);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+.learn-prog-item:hover{border-color:var(--green);color:var(--green)}
+.learn-prog-item.done{border-color:rgba(0,232,138,.3);color:var(--green);background:rgba(0,232,138,.06)}
+.learn-prog-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* Learn modules grid */
+.learn-modules{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:24px}
+.learn-module{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden}
+.learn-module:hover{border-color:var(--green);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.learn-module::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),transparent);opacity:0;transition:opacity .2s}
+.learn-module:hover::after{opacity:1}
+.lm-num{font-family:var(--mono);font-size:10px;color:var(--green);letter-spacing:1px;margin-bottom:10px;font-weight:500}
+.lm-title{font-family:var(--serif);font-size:16px;font-weight:700;color:var(--ink);letter-spacing:-0.3px;margin-bottom:6px}
+.lm-desc{font-size:12px;color:var(--ink-mid);line-height:1.6}
+.lm-arrow{position:absolute;bottom:16px;right:16px;color:var(--ink-dim);transition:all .2s;font-size:16px}
+.learn-module:hover .lm-arrow{color:var(--green);transform:translate(2px,-2px)}
+
+/* Learn content panels */
+.learn-panel{display:none;animation:fadeUp .3s ease}
+.learn-panel.active{display:block}
+.learn-back{background:transparent;border:1px solid var(--border);color:var(--ink-mid);padding:8px 16px;border-radius:8px;cursor:pointer;font-family:var(--mono);font-size:11px;margin-bottom:20px;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.learn-back:hover{border-color:var(--ink-mid);color:var(--ink)}
+.learn-content{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px}
+.learn-content h3{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--ink);letter-spacing:-0.5px;margin-bottom:16px}
+.learn-content p{font-size:14px;color:var(--ink-mid);line-height:1.85;margin-bottom:16px}
+.learn-content .tip{background:rgba(0,232,138,.06);border-left:2px solid var(--green);padding:12px 16px;border-radius:0 8px 8px 0;font-size:13px;color:var(--ink-mid);margin-top:16px;line-height:1.7;font-family:var(--mono)}
+.terms-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.term-item{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;transition:border-color .2s}
+.term-item:hover{border-color:rgba(0,232,138,.3)}
+.term-word{font-family:var(--mono);font-size:10px;color:var(--green);margin-bottom:5px;font-weight:500;letter-spacing:.5px}
+.term-def{font-size:12px;color:var(--ink-mid);line-height:1.6}
+.chart-mini{position:relative;height:180px;margin-top:20px}
+
+/* ── APP WRAPPER ADJUSTMENT ───────────────── */
+.app{flex:1;padding:0 32px 60px;max-width:none;overflow-x:hidden}
+
+/* ── TOPBAR LOGO ADJUSTMENTS ──────────────── */
+nav{display:none}
+
+@media(max-width:768px){
+  .sidenav{display:none}
+  .topbar{padding:0 16px}
+  .app{padding:0 16px 40px}
+  .layout{flex-direction:column}
+  .index-row,.quick-grid,.movers-grid,.learn-modules{grid-template-columns:1fr 1fr}
+  .stats-grid-inner{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
@@ -498,29 +590,65 @@ nav{background:var(--surface);border-bottom:1px solid var(--border);position:sti
 
   <!-- LEARN -->
   <div id="page-learn" class="page">
-    <div class="page-hd">
-      <div class="tag">Investor Education</div>
-      <h2>Build your foundation</h2>
-      <p>Everything you need to know before your first trade — explained simply.</p>
-    </div>
-    <div class="learn-grid">
-      <div class="learn-card"><h3>What is a stock?</h3><p>Buying a stock means buying a small piece of ownership in a company. If the company grows and earns more profit, your piece becomes worth more.</p><div class="tip">Like owning a slice of a business — if the shop gets popular, your slice is worth more.</div></div>
-      <div class="learn-card"><h3>RSI — Momentum Indicator</h3><p>Relative Strength Index measures buying and selling momentum on a scale of 0 to 100. It tells you whether a stock is overbought or oversold.</p><div class="tip">Above 70 = possibly overbought. Below 30 = possibly oversold. Signals, not guarantees.</div></div>
-      <div class="learn-card"><h3>Moving Averages</h3><p>SMA smooths out daily price noise to reveal the real trend. The 20-day shows short-term momentum, the 50-day shows medium-term direction.</p><div class="tip">Price above SMA 50 = uptrend. Below it = downtrend. Used by professional traders daily.</div></div>
-      <div class="learn-card"><h3>Diversification</h3><p>Never put all your money in one stock. Spreading across companies and sectors reduces risk. If one fails, your whole portfolio does not go with it.</p><div class="tip">A single index fund like VOO gives you 500 companies at once — instant diversification.</div></div>
-      <div class="learn-card full"><h3>The power of starting early — Compound Interest</h3><p>Your investment returns earn more returns over time. Starting at 16 versus 26 can mean hundreds of thousands of dollars difference at retirement — same $1,000, just more time.</p><div class="chart-mini"><canvas id="compoundChart"></canvas></div></div>
-      <div class="learn-card full"><h3>Essential terms</h3>
-        <div class="terms-grid">
-          <div class="term-item"><div class="term-word">P/E RATIO</div><div class="term-def">Price vs earnings per share. Shows how expensive a stock is relative to its profits. Average is around 20-25x.</div></div>
-          <div class="term-item"><div class="term-word">MARKET CAP</div><div class="term-def">Total value of all shares. Small cap under $2B, Mid $2-10B, Large cap over $10B.</div></div>
-          <div class="term-item"><div class="term-word">BETA</div><div class="term-def">How much the stock moves vs the S&P 500. Beta of 2 means it moves twice as much as the market.</div></div>
-          <div class="term-item"><div class="term-word">EPS</div><div class="term-def">Earnings Per Share — profit the company makes per share of stock outstanding.</div></div>
-          <div class="term-item"><div class="term-word">DIVIDEND</div><div class="term-def">Cash paid to you just for holding the stock — like rental income from owning property.</div></div>
-          <div class="term-item"><div class="term-word">52-WEEK RANGE</div><div class="term-def">Highest and lowest price over the past year. Wide range means more volatile stock.</div></div>
-          <div class="term-item"><div class="term-word">BULL MARKET</div><div class="term-def">Prices rising 20% or more from a recent low. Optimism is high. Good time to be invested.</div></div>
-          <div class="term-item"><div class="term-word">BEAR MARKET</div><div class="term-def">Prices falling 20% or more from a recent high. Fear is high. Always temporary in history.</div></div>
+    <!-- Module overview -->
+    <div id="learn-home">
+      <div class="learn-hero">
+        <div class="learn-hero-tag">Investor Education</div>
+        <h2>Build your foundation.</h2>
+        <p>Six modules. Everything you need to understand the market before you put in a single dollar. Start anywhere.</p>
+        <div class="learn-progress">
+          <div class="learn-prog-item" onclick="openModule(0)"><span class="learn-prog-dot"></span>Stocks 101</div>
+          <div class="learn-prog-item" onclick="openModule(1)"><span class="learn-prog-dot"></span>Charts & RSI</div>
+          <div class="learn-prog-item" onclick="openModule(2)"><span class="learn-prog-dot"></span>Moving Averages</div>
+          <div class="learn-prog-item" onclick="openModule(3)"><span class="learn-prog-dot"></span>Risk & Diversification</div>
+          <div class="learn-prog-item" onclick="openModule(4)"><span class="learn-prog-dot"></span>Compound Interest</div>
+          <div class="learn-prog-item" onclick="openModule(5)"><span class="learn-prog-dot"></span>Key Terms</div>
         </div>
       </div>
+      <div class="learn-modules">
+        <div class="learn-module" onclick="openModule(0)">
+          <div class="lm-num">01 — BASICS</div>
+          <div class="lm-title">What is a Stock?</div>
+          <div class="lm-desc">Ownership, value, and why companies go public.</div>
+          <div class="lm-arrow">→</div>
+        </div>
+        <div class="learn-module" onclick="openModule(1)">
+          <div class="lm-num">02 — TECHNICAL</div>
+          <div class="lm-title">RSI & Momentum</div>
+          <div class="lm-desc">How to read overbought and oversold signals.</div>
+          <div class="lm-arrow">→</div>
+        </div>
+        <div class="learn-module" onclick="openModule(2)">
+          <div class="lm-num">03 — TECHNICAL</div>
+          <div class="lm-title">Moving Averages</div>
+          <div class="lm-desc">SMA 20 vs 50 — how pros read trend direction.</div>
+          <div class="lm-arrow">→</div>
+        </div>
+        <div class="learn-module" onclick="openModule(3)">
+          <div class="lm-num">04 — STRATEGY</div>
+          <div class="lm-title">Risk & Diversification</div>
+          <div class="lm-desc">Why spreading your money is always smarter.</div>
+          <div class="lm-arrow">→</div>
+        </div>
+        <div class="learn-module" onclick="openModule(4)">
+          <div class="lm-num">05 — MINDSET</div>
+          <div class="lm-title">Compound Interest</div>
+          <div class="lm-desc">Why starting at 16 beats starting at 26 by miles.</div>
+          <div class="lm-arrow">→</div>
+        </div>
+        <div class="learn-module" onclick="openModule(5)">
+          <div class="lm-num">06 — GLOSSARY</div>
+          <div class="lm-title">Essential Terms</div>
+          <div class="lm-desc">P/E ratio, beta, EPS, market cap — all explained.</div>
+          <div class="lm-arrow">→</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Module panels -->
+    <div id="learn-panel" style="display:none">
+      <button class="learn-back" onclick="closeModule()">← Back to modules</button>
+      <div class="learn-content" id="learn-panel-content"></div>
     </div>
   </div>
 
@@ -534,10 +662,33 @@ let chatHistory=[], chatStockContext='';
 
 function showPage(p){
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach((b,i)=>b.classList.toggle('active',['dashboard','analyze','learn'][i]===p));
+  document.querySelectorAll('.snav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===p));
   const t=document.getElementById('page-'+p);
   t.classList.add('active');
-  if(p==='learn')setTimeout(drawLearnCharts,150);
+  if(p==='learn'){document.getElementById('learn-home').style.display='';document.getElementById('learn-panel').style.display='none';}
+  window.scrollTo(0,0);
+}
+
+const MODULES=[
+  {title:'What is a Stock?',tag:'01 — BASICS',content:`<h3>What is a Stock?</h3><p>When you buy a stock, you are buying a small piece of ownership in a company — called a share. If the company grows, earns more money, and becomes more valuable, your share becomes worth more too. If it struggles, your share loses value.</p><p>Companies sell shares to raise money to expand their business. You become a part-owner — a shareholder — with a stake in the company's future success.</p><div class="tip">Think of it like owning a slice of a pizza shop. If the shop gets popular and starts making more money, your slice of the business is worth more too.</div>`},
+  {title:'RSI & Momentum',tag:'02 — TECHNICAL',content:`<h3>RSI — Relative Strength Index</h3><p>RSI is a momentum indicator that measures how fast and how much a stock's price has been moving. It runs on a scale of 0 to 100 and tells you whether a stock is being overbought by too many buyers, or oversold by too many sellers.</p><p>When RSI climbs above 70, traders consider the stock possibly overbought — meaning the price may have risen too fast and could pull back. When RSI drops below 30, traders consider it oversold — meaning selling may have gone too far and the price could bounce.</p><div class="tip">RSI above 70 = possibly overbought (price may drop). RSI below 30 = possibly oversold (price may rise). These are signals, not guarantees — always look at the full picture.</div>`},
+  {title:'Moving Averages',tag:'03 — TECHNICAL',content:`<h3>Moving Averages (SMA)</h3><p>A Simple Moving Average (SMA) smooths out the daily noise in a stock's price by averaging the price over a set number of days. The SMA 20 averages the last 20 trading days and shows short-term momentum. The SMA 50 averages 50 days and shows the medium-term trend direction.</p><p>Professional traders watch for price crossovers. When a stock's price crosses above its SMA 50, it's often seen as a bullish signal. When it crosses below, it can signal a downtrend beginning.</p><div class="tip">Price above SMA 50 = generally uptrend territory. Below SMA 50 = downtrend territory. SMA 20 crossing above SMA 50 is called a "golden cross" — one of the most watched signals in trading.</div>`},
+  {title:'Risk & Diversification',tag:'04 — STRATEGY',content:`<h3>Risk & Diversification</h3><p>Every investment carries risk — the chance that you could lose money. But not all risk is equal, and smart investors manage risk by spreading their money across different assets. This is called diversification.</p><p>Instead of putting all your money into one company, you spread it across different companies, sectors, and even countries. If one company fails, your entire portfolio does not go with it. The losses in one area can be offset by gains in another.</p><div class="tip">A single index fund like VOO (Vanguard S&P 500 ETF) gives you exposure to 500 of the largest US companies at once — instant diversification for the price of one share.</div>`},
+  {title:'Compound Interest',tag:'05 — MINDSET',content:`<h3>The Power of Starting Early</h3><p>Compound interest is when your investment returns start earning their own returns. You earn money on your original investment, and then you earn money on that earned money too — and it grows exponentially over time.</p><p>The earlier you start, the more powerful this effect becomes. Investing $1,000 at age 16 with an 8% annual return gives you over $21,000 by age 65. Starting at 26 instead gives you only $10,000 — less than half — for the same $1,000 investment.</p><div class="chart-mini"><canvas id="compoundChart"></canvas></div><div class="tip" style="margin-top:16px">Time in the market beats timing the market. Starting small and early is always better than waiting until you have more money.</div>`},
+  {title:'Essential Terms',tag:'06 — GLOSSARY',content:`<h3>Essential Terms</h3><p>Understanding the language of investing is the first step to thinking like an investor.</p><div class="terms-grid"><div class="term-item"><div class="term-word">P/E RATIO</div><div class="term-def">Price vs earnings per share. Shows if a stock is cheap or expensive. Average is around 20-25x.</div></div><div class="term-item"><div class="term-word">MARKET CAP</div><div class="term-def">Total value of all shares. Small cap under $2B, Mid $2-10B, Large cap over $10B.</div></div><div class="term-item"><div class="term-word">BETA</div><div class="term-def">How much the stock moves vs the S&P 500. Beta 2 = moves twice as much as the market.</div></div><div class="term-item"><div class="term-word">EPS</div><div class="term-def">Earnings Per Share — profit the company makes for each share of stock.</div></div><div class="term-item"><div class="term-word">DIVIDEND</div><div class="term-def">Cash paid to you per share just for holding the stock — like rental income.</div></div><div class="term-item"><div class="term-word">52-WEEK RANGE</div><div class="term-def">Highest and lowest price over the past year. Wide range = more volatile stock.</div></div><div class="term-item"><div class="term-word">BULL MARKET</div><div class="term-def">Prices rising 20%+ from a recent low. Optimism is high. Good time to be invested.</div></div><div class="term-item"><div class="term-word">BEAR MARKET</div><div class="term-def">Prices falling 20%+ from a recent high. Fear is high. Always temporary historically.</div></div></div>`},
+];
+
+function openModule(i){
+  const m=MODULES[i];
+  document.getElementById('learn-home').style.display='none';
+  document.getElementById('learn-panel').style.display='';
+  document.getElementById('learn-panel-content').innerHTML=`<div style="font-family:var(--mono);font-size:9px;color:var(--green);letter-spacing:2px;margin-bottom:4px">${m.tag}</div>${m.content}`;
+  if(i===4)setTimeout(drawLearnCharts,100);
+  window.scrollTo(0,0);
+}
+function closeModule(){
+  document.getElementById('learn-home').style.display='';
+  document.getElementById('learn-panel').style.display='none';
 }
 
 function getWL(){try{const s=localStorage.getItem('siq_wl');return s?JSON.parse(s):[...DEFAULT_WL];}catch(e){return[...DEFAULT_WL];}}
@@ -746,6 +897,8 @@ function drawLearnCharts(){
   if(ctx&&!ctx._done){ctx._done=true;new Chart(ctx,{type:'line',data:{labels:Array.from({length:40},(_,i)=>2024+i),datasets:[{label:'Start at 16',data:Array.from({length:40},(_,i)=>Math.round(1000*Math.pow(1.08,i))),borderColor:'#009952',borderWidth:2,pointRadius:0,fill:true,backgroundColor:'rgba(0,153,82,.06)',tension:.3},{label:'Start at 26',data:Array.from({length:40},(_,i)=>i<10?null:Math.round(1000*Math.pow(1.08,i-10))),borderColor:'#e8334a',borderWidth:2,pointRadius:0,borderDash:[5,4],fill:false,tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{color:'#4a4840',font:{size:11},boxWidth:10,padding:14}}},scales:{x:{ticks:{color:'#8a8880',font:{size:10},maxTicksLimit:6},grid:{color:'rgba(13,13,11,.06)'}},y:{ticks:{color:'#4a4840',font:{size:10},callback:v=>'$'+v.toLocaleString()},grid:{color:'rgba(13,13,11,.06)'}}}}});}
 }
 
+// Market status
+const now=new Date();const h=now.getHours(),d=now.getDay();const isOpen=d>=1&&d<=5&&h>=9&&h<16;const dot=document.getElementById('market-dot');const txt=document.getElementById('market-status-text');if(dot&&txt){dot.style.background=isOpen?'var(--green)':'#ff4d6a';dot.style.boxShadow=isOpen?'0 0 6px var(--green)':'0 0 6px #ff4d6a';txt.textContent=isOpen?'Market Open':'Market Closed';}
 initDashboard();
 </script>
 </body>
