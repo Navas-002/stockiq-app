@@ -714,12 +714,17 @@ const DEFAULT_WL = ['AAPL','TSLA','NVDA','AMZN','MSFT','GOOGL'];
 let currentChart=null, allCandles=[], activeInds={sma20:true,sma50:false,bb:false}, currentType='price', currentRange='1M', currentTicker=null;
 let chatHistory=[], chatStockContext='';
 
-// ── NAVIGATION SYSTEM ────────────────────────────────────
-// State stack — each entry is {page, substate}
-let navStack = [{page:'dashboard', sub:null}];
-let navIdx = 0;
+// ── NAVIGATION SYSTEM WITH BROWSER HISTORY API ───────────
 
-function showPage(p, sub=null, addToHistory=true) {
+function buildURL(p, sub, ticker) {
+  const params = new URLSearchParams();
+  params.set('page', p);
+  if (sub) params.set('sub', sub);
+  if (ticker) params.set('ticker', ticker);
+  return '?' + params.toString();
+}
+
+function showPage(p, sub=null, addToHistory=true, ticker=null) {
   // Animate out current page
   const current = document.querySelector('.page.active');
   if (current) {
@@ -728,27 +733,21 @@ function showPage(p, sub=null, addToHistory=true) {
   }
 
   setTimeout(() => {
-    // Hide all pages
     document.querySelectorAll('.page').forEach(el => {
       el.classList.remove('active');
       el.style.opacity = '';
       el.style.transform = '';
     });
 
-    // Update sidenav active state
     document.querySelectorAll('.snav-btn[data-page]').forEach(b => {
       b.classList.toggle('active', b.dataset.page === p);
     });
 
-    // Show target page
     const target = document.getElementById('page-' + p);
     if (target) target.classList.add('active');
 
-    // Handle sub-states
     if (p === 'learn') {
-      if (sub === 'module') {
-        // stay on panel
-      } else {
+      if (sub !== 'module') {
         document.getElementById('learn-home').style.display = '';
         document.getElementById('learn-panel').style.display = 'none';
       }
@@ -757,74 +756,58 @@ function showPage(p, sub=null, addToHistory=true) {
       if (sub === 'result') {
         document.getElementById('analyze-result').style.display = '';
         document.getElementById('analyze-placeholder').style.display = 'none';
-      } else if (sub === null || sub === 'search') {
+      } else {
         document.getElementById('analyze-result').style.display = 'none';
         document.getElementById('analyze-placeholder').style.display = '';
       }
     }
 
     window.scrollTo({top: 0, behavior: 'smooth'});
+    updateNavBtns();
   }, current ? 120 : 0);
 
-  // Push to nav stack
+  // Push to browser history
   if (addToHistory) {
-    navStack = navStack.slice(0, navIdx + 1);
-    navStack.push({page: p, sub});
-    navIdx = navStack.length - 1;
+    const url = buildURL(p, sub, ticker);
+    const state = {page: p, sub, ticker};
+    history.pushState(state, '', url);
   }
-  updateNavBtns();
 }
 
-function navBack() {
-  if (navIdx <= 0) return;
-
-  // Smart back — if on analyze result, go back to search first
-  const cur = navStack[navIdx];
-  if (cur.page === 'analyze' && cur.sub === 'result') {
-    showPage('analyze', 'search', false);
-    navStack[navIdx] = {page:'analyze', sub:'search'};
-    updateNavBtns();
-    return;
+// Handle browser back/forward buttons
+window.addEventListener('popstate', e => {
+  const state = e.state;
+  if (!state) { showPage('dashboard', null, false); return; }
+  const {page, sub, ticker} = state;
+  showPage(page, sub, false);
+  // If returning to a stock result, reload it
+  if (page === 'analyze' && sub === 'result' && ticker) {
+    quickAnalyze(ticker);
   }
-  // If on learn module, go back to learn home first
-  if (cur.page === 'learn' && cur.sub === 'module') {
-    showPage('learn', null, false);
-    navStack[navIdx] = {page:'learn', sub:null};
-    updateNavBtns();
-    return;
+  if (page === 'learn' && sub === 'module' && state.moduleIdx !== undefined) {
+    openModule(state.moduleIdx, false);
   }
+});
 
-  navIdx--;
-  const prev = navStack[navIdx];
-  showPage(prev.page, prev.sub, false);
-}
-
-function navFwd() {
-  if (navIdx >= navStack.length - 1) return;
-  navIdx++;
-  const next = navStack[navIdx];
-  showPage(next.page, next.sub, false);
-}
+function navBack() { history.back(); }
+function navFwd()  { history.forward(); }
 
 function updateNavBtns() {
+  // Sidebar back/fwd just mirror browser history — always enabled
+  // (can't check browser history length reliably, so leave always enabled)
   const b = document.getElementById('nav-back');
   const f = document.getElementById('nav-fwd');
-  if (b) b.disabled = navIdx <= 0;
-  if (f) f.disabled = navIdx >= navStack.length - 1;
+  if (b) b.disabled = false;
+  if (f) f.disabled = false;
 }
 
-function goHome() {
-  showPage('dashboard');
-}
+function goHome() { showPage('dashboard'); }
+function showAnalyzePlaceholder() { showPage('analyze', 'search'); }
 
-function showAnalyzePlaceholder() {
-  showPage('analyze', 'search');
-}
-
-// Keyboard navigation — arrow keys with Alt
+// Keyboard: Alt + arrow = browser back/forward
 document.addEventListener('keydown', e => {
-  if (e.altKey && e.key === 'ArrowLeft') { e.preventDefault(); navBack(); }
-  if (e.altKey && e.key === 'ArrowRight') { e.preventDefault(); navFwd(); }
+  if (e.altKey && e.key === 'ArrowLeft')  { e.preventDefault(); history.back(); }
+  if (e.altKey && e.key === 'ArrowRight') { e.preventDefault(); history.forward(); }
 });
 
 const MODULES=[
@@ -842,10 +825,9 @@ function openModule(i){
   document.getElementById('learn-panel').style.display='';
   document.getElementById('learn-panel-content').innerHTML=`<div style="font-family:var(--mono);font-size:9px;color:var(--green);letter-spacing:2px;margin-bottom:4px">${m.tag}</div>${m.content}`;
   if(i===4)setTimeout(drawLearnCharts,100);
-  // Push module state to nav
-  navStack = navStack.slice(0, navIdx + 1);
-  navStack.push({page:'learn', sub:'module', moduleIdx:i});
-  navIdx = navStack.length - 1;
+  // Push module to browser history
+  const state = {page:'learn', sub:'module', moduleIdx:i};
+  history.pushState(state, '', '?page=learn&sub=module&module='+i);
   updateNavBtns();
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -979,8 +961,11 @@ async function analyzeStock(){hideSugg();const t=document.getElementById('ticker
 async function quickAnalyze(ticker){
   hideSugg();currentTicker=ticker;chatHistory=[];chatStockContext=ticker;
   document.getElementById('tickerInput').value=ticker;
-  // Navigate to analyze result state
-  showPage('analyze', 'result', true);
+  // Navigate to analyze result state — push URL with ticker
+  showPage('analyze', 'result', true, ticker);
+  // Also update history state with ticker so popstate can reload
+  const state = {page:'analyze', sub:'result', ticker};
+  history.replaceState(state, '', '?page=analyze&sub=result&ticker='+ticker);
   const msgs=document.getElementById('ai-messages');
   msgs.innerHTML='<div class="ai-loading"><div class="spinner" style="border-top-color:var(--green)"></div>Analyzing live market data...</div>';
   document.getElementById('ai-input-row').style.display='none';
@@ -1062,8 +1047,24 @@ function drawLearnCharts(){
 // Back to top
 window.addEventListener('scroll',()=>{const btn=document.getElementById('back-to-top');if(btn)btn.classList.toggle('visible',window.scrollY>400);});
 
-// Init nav
-showPage('dashboard', null, true);
+// Init nav — restore state from URL if present
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const p = params.get('page') || 'dashboard';
+  const sub = params.get('sub') || null;
+  const ticker = params.get('ticker') || null;
+  const moduleIdx = params.get('module');
+  // Replace initial history entry
+  history.replaceState({page:p, sub, ticker}, '', window.location.search || '?page=dashboard');
+  showPage(p, sub, false);
+  if (p === 'analyze' && sub === 'result' && ticker) {
+    // Reload stock data
+    setTimeout(() => quickAnalyze(ticker), 500);
+  }
+  if (p === 'learn' && sub === 'module' && moduleIdx !== null) {
+    setTimeout(() => openModule(parseInt(moduleIdx), false), 100);
+  }
+})();
 
 // Market status
 const now=new Date();const h=now.getHours(),d=now.getDay();const isOpen=d>=1&&d<=5&&h>=9&&h<16;const dot=document.getElementById('market-dot');const txt=document.getElementById('market-status-text');if(dot&&txt){dot.style.background=isOpen?'var(--green)':'#ff4d6a';dot.style.boxShadow=isOpen?'0 0 6px var(--green)':'0 0 6px #ff4d6a';txt.textContent=isOpen?'Market Open':'Market Closed';}
