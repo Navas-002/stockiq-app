@@ -399,6 +399,11 @@ nav{display:none}
 .snav-hist-btn{background:transparent;border:1px solid var(--border);color:var(--ink-dim);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
 .snav-hist-btn:hover{border-color:var(--border2);color:var(--ink)}
 .snav-hist-btn:disabled{opacity:.3;cursor:default}
+
+.home-btn{background:var(--green) !important;color:var(--bg) !important;font-weight:700 !important;margin-bottom:4px}
+.home-btn .snav-icon{color:var(--bg) !important}
+.home-btn .snav-label{color:var(--bg) !important}
+.home-btn:hover{background:var(--green-dark) !important;transform:none}
 </style>
 </head>
 <body>
@@ -532,7 +537,10 @@ nav{display:none}
 
     <div id="analyze-result" style="display:none">
       <div class="page-nav-row">
-        <button class="page-back-btn" onclick="showAnalyzePlaceholder()">← Back to Search</button>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="page-back-btn" onclick="showPage('dashboard')" style="background:var(--green);border-color:var(--green);color:var(--bg);font-weight:700">⌂ Dashboard</button>
+          <button class="page-back-btn" onclick="showAnalyzePlaceholder()">← Back to Search</button>
+        </div>
         <div class="breadcrumb"><span onclick="showPage('dashboard')" class="bc-link">Dashboard</span><span class="bc-sep">›</span><span onclick="showPage('analyze')" class="bc-link">Analyze</span><span class="bc-sep">›</span><span class="bc-current" id="bc-ticker">—</span></div>
       </div>
       <div class="stock-hd">
