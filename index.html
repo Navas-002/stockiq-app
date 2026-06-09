@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://stock-api-a920.onrender.com https://api.groq.com; frame-ancestors 'none';"/>
+<meta name="referrer" content="strict-origin-when-cross-origin"/>
 <title>Syndicate — Invest Smarter</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23040406'/%3E%3Crect width='32' height='32' rx='7' fill='none' stroke='%2300ff88' stroke-width='1.5' opacity='0.4'/%3E%3Ctext x='6' y='24' font-family='Arial Black,Arial,sans-serif' font-size='21' font-weight='900' fill='%2300ff88'%3E%24%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -537,7 +540,7 @@ nav{display:none}
     </div>
     <div class="search-area">
       <div class="search-row">
-        <input id="tickerInput" class="search-input" type="text" placeholder="Any ticker: AAPL, TSLA, NVDA, BRK.B, VOO..." maxlength="8" oninput="onSearchInput(this.value)" onkeydown="if(event.key==='Enter')analyzeStock();if(event.key==='Escape')hideSugg()"/>
+        <input id="tickerInput" class="search-input" type="text" placeholder="Any ticker: AAPL, TSLA, NVDA, BRK.B, VOO..." maxlength="8" autocomplete="off" spellcheck="false" oninput="this.value=this.value.replace(/[^A-Za-z0-9.\-]/g,'').toUpperCase();onSearchInput(this.value)" onkeydown="if(event.key==='Enter')analyzeStock();if(event.key==='Escape')hideSugg()"/>
         <button class="search-btn" onclick="analyzeStock()">Analyze</button>
       </div>
       <div class="suggestions" id="suggestions"></div>
@@ -709,6 +712,12 @@ nav{display:none}
 </div><!-- /app -->
 
 <script>
+// Security: enforce noopener on all external links
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[target="_blank"]');
+  if (a) { a.rel = 'noopener noreferrer'; }
+});
+
 const API = 'https://stock-api-a920.onrender.com';
 const DEFAULT_WL = ['AAPL','TSLA','NVDA','AMZN','MSFT','GOOGL'];
 let currentChart=null, allCandles=[], activeInds={sma20:true,sma50:false,bb:false}, currentType='price', currentRange='1M', currentTicker=null;
@@ -932,7 +941,7 @@ function appendAIMessage(role,text,verdict=null,verdictText=null){
   const avatar=role==='assistant'?'AI':'YOU';
   let bubble='';
   if(verdict&&role==='assistant')bubble+=`<div class="ai-verdict-inline ${verdict}">${verdictText}</div><br>`;
-  bubble+=text.replace(/\n/g,'<br>');
+  const escAI=s=>s.replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));bubble+=escAI(text).replace(/\n/g,'<br>');
   wrap.innerHTML=`<div class="ai-msg-avatar">${avatar}</div><div class="ai-msg-bubble">${bubble}</div>`;
   msgs.appendChild(wrap);msgs.scrollTop=msgs.scrollHeight;
 }
@@ -992,7 +1001,8 @@ async function quickAnalyze(ticker){
     document.getElementById('res-sector').textContent=stock.sector||'Unknown';
     buildStatsTable(stock);buildRisk(stock.changePct,stock.sector);
     if(history.candles&&history.candles.length){allCandles=history.candles;buildChart(rangeC(allCandles,currentRange),currentType);}
-    try{const news=await apiFetch(`/stock/${ticker}/news`);if(news.articles&&news.articles.length){document.getElementById('news-section').style.display='';document.getElementById('news-list').innerHTML=news.articles.map(a=>`<div class="news-item"><a href="${a.url}" target="_blank">${a.headline}</a><div class="news-meta">${a.source} · ${a.datetime}</div></div>`).join('');}}catch(e){}
+    try{const news=await apiFetch(`/stock/${ticker}/news`);if(news.articles&&news.articles.length){document.getElementById('news-section').style.display='';const sanitize=s=>s.replace(/[<>&"']/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]));
+      document.getElementById('news-list').innerHTML=news.articles.map(a=>`<div class="news-item"><a href="${a.url.startsWith('http')?a.url:'#'}" target="_blank" rel="noopener noreferrer">${sanitize(a.headline)}</a><div class="news-meta">${sanitize(a.source)} · ${sanitize(a.datetime)}</div></div>`).join('');}}catch(e){}
     const verdict=stock.changePct>1.5?'buy':stock.changePct<-1.5?'caution':'hold';
     const verdictText=verdict==='buy'?'Momentum Up':verdict==='caution'?'Pulling Back':'Relatively Stable';
     const prompt=`Analyze ${ticker} (${stock.name}): Price $${stock.price.toFixed(2)}, change ${stock.changePct.toFixed(2)}%, sector ${stock.sector||'unknown'}, market cap ${stock.marketCap||'unknown'}. Write 3-4 clear sentences: what the company does, whether today's move is notable, ONE key risk. End with an educational takeaway. No jargon. No direct buy/sell.`;
