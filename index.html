@@ -429,9 +429,174 @@ nav{display:none}
 
 /* Keyboard shortcut hint */
 .nav-hint{font-family:var(--mono);font-size:9px;color:var(--ink-dim);padding:6px 14px;opacity:.5;letter-spacing:.5px}
+
+/* ════════════ ADDED FEATURES ════════════ */
+
+/* Re-center app & re-enable top nav (sidenav markup not present in this build) */
+nav{display:block !important}
+.app{max-width:1140px;margin:0 auto;padding:0 40px 80px}
+@media(max-width:680px){.app{padding:0 20px 60px}}
+
+/* ── AUTH / LOGIN STARTUP SCREEN ── */
+body.locked{overflow:hidden;height:100vh}
+.auth-overlay{position:fixed;inset:0;z-index:3000;background:linear-gradient(135deg,#0d0d0b 0%,#181815 100%);display:flex;align-items:stretch;overflow-y:auto}
+.auth-overlay.hidden{display:none}
+.auth-left{flex:1;padding:56px 56px;display:flex;flex-direction:column;justify-content:center;color:#fff;position:relative;overflow:hidden}
+.auth-left::before{content:'';position:absolute;top:-90px;right:-90px;width:360px;height:360px;background:radial-gradient(circle,rgba(0,232,138,.12) 0%,transparent 70%);pointer-events:none}
+.auth-brand{display:flex;align-items:center;gap:12px;margin-bottom:44px;position:relative}
+.auth-brand .logo-mark{width:44px;height:44px;background:#000;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.auth-brand .logo-mark svg{width:24px;height:24px}
+.auth-brand-name{font-family:var(--serif);font-size:27px;font-weight:700;font-style:italic;letter-spacing:-.5px}
+.auth-brand-name em{font-style:normal;color:var(--green)}
+.auth-left h1{font-family:var(--serif);font-size:clamp(34px,4.5vw,54px);font-weight:900;line-height:1.04;letter-spacing:-1.5px;margin-bottom:18px;max-width:560px;position:relative}
+.auth-left h1 em{font-style:italic;color:var(--green)}
+.auth-left .sub{font-size:16px;color:rgba(255,255,255,.6);line-height:1.7;max-width:460px;margin-bottom:34px;position:relative}
+.auth-points{display:flex;flex-direction:column;gap:15px;max-width:440px;position:relative}
+.auth-point{display:flex;gap:13px;align-items:flex-start;font-size:14px;color:rgba(255,255,255,.78);line-height:1.5}
+.auth-point .ck{flex-shrink:0;margin-top:1px;width:20px;height:20px;border-radius:50%;background:rgba(0,232,138,.14);border:1px solid rgba(0,232,138,.3);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.auth-right{width:452px;background:var(--surface);display:flex;flex-direction:column;justify-content:center;padding:48px 46px;flex-shrink:0}
+.auth-card-tag{font-family:var(--mono);font-size:10px;color:var(--green-dark);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;font-weight:600}
+.auth-card h2{font-family:var(--serif);font-size:27px;font-weight:900;letter-spacing:-.8px;color:var(--ink);margin-bottom:6px}
+.auth-card .lead{font-size:13.5px;color:var(--ink-mid);margin-bottom:26px;line-height:1.6}
+.auth-field{margin-bottom:15px}
+.auth-field label{display:block;font-size:12px;font-weight:600;color:var(--ink-mid);margin-bottom:6px}
+.auth-field input{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:9px;padding:12px 14px;font-family:var(--sans);font-size:14px;color:var(--ink);outline:none;transition:all .2s}
+.auth-field input:focus{border-color:var(--ink);box-shadow:0 0 0 3px rgba(13,13,11,.07)}
+.auth-err{color:var(--red);font-size:12px;margin:-6px 0 12px;display:none}
+.auth-err.show{display:block}
+.auth-submit{width:100%;background:var(--ink);color:#fff;border:none;border-radius:9px;padding:14px;font-family:var(--sans);font-size:14px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-top:6px}
+.auth-submit:hover{background:#1a1a18;transform:translateY(-1px);box-shadow:0 6px 18px rgba(13,13,11,.18)}
+.auth-alt{text-align:center;font-size:13px;color:var(--ink-dim);margin-top:20px}
+.auth-alt a{color:var(--green-dark);font-weight:600;cursor:pointer;text-decoration:none}
+.auth-divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--ink-dim);font-size:11px;font-family:var(--mono)}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.auth-guest{width:100%;background:transparent;border:1.5px solid var(--border);color:var(--ink-mid);border-radius:9px;padding:12px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.auth-guest:hover{border-color:var(--ink-mid);color:var(--ink);background:var(--bg2)}
+.auth-demo-note{font-family:var(--mono);font-size:10px;color:var(--ink-dim);text-align:center;margin-top:20px;line-height:1.6;opacity:.85}
+@media(max-width:860px){.auth-left{display:none}.auth-right{width:100%}}
+
+/* nav account chip + logout */
+.nav-account{display:flex;align-items:center;gap:10px}
+.nav-avatar{width:30px;height:30px;border-radius:50%;background:var(--green-bg);border:1px solid rgba(0,201,110,.3);color:var(--green-dark);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-weight:700;font-size:13px;flex-shrink:0}
+.nav-logout{background:transparent;border:1px solid var(--border);color:var(--ink-dim);padding:6px 12px;border-radius:8px;font-family:var(--mono);font-size:10px;cursor:pointer;transition:all .2s;letter-spacing:.5px}
+.nav-logout:hover{border-color:var(--red);color:var(--red)}
+.logo{cursor:pointer}
+
+/* ── COLLAPSIBLE CARDS ── */
+[data-collapsible] .col-head{cursor:pointer;user-select:none}
+.col-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.col-chev{transition:transform .25s ease;font-size:12px;color:var(--ink-dim);flex-shrink:0;line-height:1}
+[data-collapsible].collapsed .col-chev{transform:rotate(-90deg)}
+[data-collapsible].collapsed .col-body{display:none}
+.ai-card .col-chev{color:rgba(255,255,255,.45)}
+.col-head .col-hint{font-family:var(--mono);font-size:9px;color:var(--ink-dim);font-weight:400;margin-left:auto;margin-right:4px;opacity:.7}
+
+/* ── CHART DEFINITIONS ── */
+.def-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px}
+.def-head{padding:16px 24px;border-bottom:1px solid var(--border);font-family:var(--serif);font-size:16px;font-weight:700;color:var(--ink);letter-spacing:-.3px}
+[data-collapsible].collapsed .def-head{border-bottom:none}
+.def-body{padding:6px 24px 22px}
+.def-intro{font-size:13px;color:var(--ink-mid);line-height:1.7;margin:12px 0 18px;background:var(--green-bg);border-left:3px solid var(--green);padding:12px 14px;border-radius:0 8px 8px 0}
+.def-section-label{font-family:var(--mono);font-size:10px;color:var(--ink-dim);letter-spacing:1.5px;text-transform:uppercase;margin:6px 0 12px;font-weight:600}
+.def-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.def-item{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px}
+.def-term{font-family:var(--serif);font-size:14px;color:var(--ink);font-weight:700;letter-spacing:-.2px;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.def-pill{font-family:var(--mono);font-size:8px;padding:2px 7px;border-radius:10px;background:var(--green-bg);color:var(--green-dark);letter-spacing:.5px;text-transform:uppercase;font-weight:600}
+.def-pill.adv{background:#fff4e0;color:#a06b00}
+.def-text{font-size:12.5px;color:var(--ink-mid);line-height:1.65}
+@media(max-width:680px){.def-grid{grid-template-columns:1fr}}
+
+/* ── WATCHLIST SIDE-SCROLL ── */
+.wl-scroll{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 14px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.wl-scroll::-webkit-scrollbar{height:6px}
+.wl-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.wl-scroll::-webkit-scrollbar-track{background:transparent}
+.wl-card{flex:0 0 170px;scroll-snap-align:start;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;cursor:pointer;transition:all .2s;position:relative}
+.wl-card:hover{border-color:var(--ink);transform:translateY(-2px);box-shadow:0 8px 24px rgba(13,13,11,.08)}
+.wl-card-ico{width:40px;height:40px;background:var(--bg2);border:1px solid var(--border);border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:13px;font-weight:700;color:var(--ink);margin-bottom:12px}
+.wl-card-ticker{font-family:var(--serif);font-weight:700;font-size:17px;letter-spacing:-.3px;color:var(--ink)}
+.wl-card-co{font-size:11px;color:var(--ink-dim);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wl-card-price{font-family:var(--mono);font-size:15px;font-weight:500;color:var(--ink);margin-top:12px}
+.wl-card-pct{font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500;display:inline-block;margin-top:7px}
+.wl-card-pct.up{background:var(--green-bg);color:var(--green-dark)}
+.wl-card-pct.down{background:var(--red-bg);color:var(--red)}
+.wl-card-rm{position:absolute;top:10px;right:10px;background:var(--surface);border:1px solid var(--border);color:var(--ink-dim);width:24px;height:24px;border-radius:6px;cursor:pointer;font-size:10px;display:flex;align-items:center;justify-content:center;transition:all .2s;opacity:0}
+.wl-card:hover .wl-card-rm{opacity:1}
+.wl-card-rm:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
+.wl-loading{flex:0 0 auto;padding:24px;color:var(--ink-dim);font-size:13px;display:flex;align-items:center;gap:8px}
+
+/* ── LEARN ROADMAP ── */
+.roadmap{position:relative;margin-top:6px}
+.rm-step{position:relative;display:flex;gap:18px;padding-bottom:16px}
+.rm-step:last-child{padding-bottom:0}
+.rm-rail{position:relative;display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:42px}
+.rm-node{width:42px;height:42px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-weight:900;font-size:15px;color:var(--ink-dim);transition:all .25s;z-index:2;flex-shrink:0}
+.rm-line{width:2px;flex:1;background:var(--border);margin:6px 0;border-radius:2px}
+.rm-step:last-child .rm-line{display:none}
+.rm-card{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px 18px;cursor:pointer;transition:all .22s;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:0}
+.rm-card:hover{border-color:var(--green);transform:translateX(3px);box-shadow:0 6px 20px rgba(0,201,110,.08)}
+.rm-card:hover .rm-go{color:var(--green);transform:translateX(2px)}
+.rm-step:hover .rm-node{border-color:var(--green);color:var(--green);background:var(--green-bg)}
+.rm-cat{font-family:var(--mono);font-size:9px;color:var(--green-dark);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:4px}
+.rm-title{font-family:var(--serif);font-size:17px;font-weight:700;color:var(--ink);letter-spacing:-.3px;margin-bottom:3px}
+.rm-desc{font-size:12.5px;color:var(--ink-mid);line-height:1.5}
+.rm-go{font-size:18px;color:var(--ink-dim);transition:all .2s;flex-shrink:0}
+.rm-step.rm-done .rm-node{border-color:var(--green);background:var(--green);color:#fff}
+.rm-step.rm-done .rm-node span{display:none}
+.rm-step.rm-done .rm-node::after{content:'✓';font-size:16px}
+@media(max-width:680px){.rm-card{flex-direction:column;align-items:flex-start}.rm-go{align-self:flex-end}}
 </style>
 </head>
-<body>
+<body class="locked">
+
+<!-- ════ STARTUP / LOGIN SCREEN (demo only, client-side) ════ -->
+<div class="auth-overlay" id="auth-overlay">
+  <div class="auth-left">
+    <div class="auth-brand">
+      <div class="logo-mark">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 2L14 6H11V10H9V6H6L10 2Z" fill="#00ff88"/>
+          <path d="M10 18L6 14H9V10H11V14H14L10 18Z" fill="white" opacity=".6"/>
+          <rect x="4" y="9" width="12" height="2" rx="1" fill="white" opacity=".3"/>
+        </svg>
+      </div>
+      <span class="auth-brand-name"><em>$</em>YNDICATE</span>
+    </div>
+    <h1>Invest smarter.<br>Start <em>here.</em></h1>
+    <p class="sub">The market doesn't have to be confusing. Syndicate gives you live data, plain-English explanations, and an AI coach — built for people learning from zero.</p>
+    <div class="auth-points">
+      <div class="auth-point"><span class="ck">✓</span><span>Real-time prices, charts, and key stats for any stock</span></div>
+      <div class="auth-point"><span class="ck">✓</span><span>Every term and chart explained like you've never traded before</span></div>
+      <div class="auth-point"><span class="ck">✓</span><span>A built-in AI advisor that answers your questions, judgment-free</span></div>
+      <div class="auth-point"><span class="ck">✓</span><span>Six bite-sized lessons that take you from beginner to confident</span></div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div class="auth-card">
+      <div class="auth-card-tag" id="auth-tag">Welcome back</div>
+      <h2 id="auth-title">Sign in</h2>
+      <p class="lead" id="auth-lead">Pick up right where you left off.</p>
+      <div class="auth-field">
+        <label for="auth-email">Email</label>
+        <input type="email" id="auth-email" placeholder="you@example.com" autocomplete="email" onkeydown="if(event.key==='Enter')doLogin()"/>
+      </div>
+      <div class="auth-field" id="auth-name-field" style="display:none">
+        <label for="auth-name">Full name</label>
+        <input type="text" id="auth-name" placeholder="Your name" autocomplete="name" onkeydown="if(event.key==='Enter')doLogin()"/>
+      </div>
+      <div class="auth-field">
+        <label for="auth-pass">Password</label>
+        <input type="password" id="auth-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+      </div>
+      <div class="auth-err" id="auth-err">Please enter an email and password to continue.</div>
+      <button class="auth-submit" id="auth-submit-btn" onclick="doLogin()">Sign in</button>
+      <div class="auth-alt" id="auth-alt">New to Syndicate? <a onclick="toggleAuthMode()">Create an account</a></div>
+      <div class="auth-divider">or</div>
+      <button class="auth-guest" onclick="loginGuest()">Explore as a guest</button>
+      <div class="auth-demo-note">Demo only — this is a practice login. No real account is created and no password is stored or sent anywhere.</div>
+    </div>
+  </div>
+</div>
 
 <!-- TICKER TAPE -->
 <div class="ticker-tape">
@@ -458,7 +623,7 @@ nav{display:none}
 <!-- NAV -->
 <nav>
   <div class="nav-inner">
-    <a class="logo" href="#">
+    <a class="logo" onclick="goHome()" title="Back to dashboard">
       <div class="logo-mark">
         <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M10 2L14 6H11V10H9V6H6L10 2Z" fill="#00ff88"/>
@@ -477,6 +642,10 @@ nav{display:none}
       <div class="live-chip">
         <div class="live-bars"><div class="live-bar"></div><div class="live-bar"></div><div class="live-bar"></div></div>
         LIVE
+      </div>
+      <div class="nav-account">
+        <div class="nav-avatar" id="nav-avatar" title="">S</div>
+        <button class="nav-logout" onclick="logout()">LOG OUT</button>
       </div>
     </div>
   </div>
@@ -522,13 +691,13 @@ nav{display:none}
 
     <div class="sec-hd">
       <div class="sec-title">My Watchlist</div>
-      <div class="sec-hint">tap any to analyze</div>
+      <div class="sec-hint">tap any to analyze · scroll sideways for more →</div>
     </div>
     <div class="wl-add">
       <input class="wl-input" id="wl-add-input" type="text" placeholder="Add any ticker e.g. AAPL, TSLA, VOO..." maxlength="8" oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')addToWatchlist()"/>
       <button class="wl-add-btn" onclick="addToWatchlist()">+ Add</button>
     </div>
-    <div class="wl-wrap"><div id="stock-list"><div class="loading-row"><div class="spinner"></div>Loading watchlist...</div></div></div>
+    <div class="wl-scroll" id="stock-list"><div class="wl-loading"><div class="spinner"></div>Loading watchlist...</div></div>
   </div>
 
   <!-- ANALYZE -->
@@ -605,28 +774,56 @@ nav{display:none}
         <div class="chart-box"><canvas id="stockChart"></canvas></div>
       </div>
 
-      <div class="stats-card">
-        <div class="stats-hd">Key Statistics</div>
-        <div class="stats-grid-inner">
+      <div class="def-card collapsed" data-collapsible>
+        <div class="def-head col-head" onclick="toggleCard(this)">
+          <span>📖 What am I looking at?</span>
+          <span class="col-hint">tap to expand</span>
+          <span class="col-chev">▾</span>
+        </div>
+        <div class="def-body col-body">
+          <div class="def-intro">New to charts? No problem. Here's every button above this card explained in plain English — no finance background needed.</div>
+          <div class="def-section-label">The four chart views (top-right buttons)</div>
+          <div class="def-grid">
+            <div class="def-item"><div class="def-term">Price <span class="def-pill">Basic</span></div><div class="def-text">What one share cost on each day. The line rising means the stock got more expensive; falling means cheaper. This is the default view.</div></div>
+            <div class="def-item"><div class="def-term">Volume <span class="def-pill">Basic</span></div><div class="def-text">How many shares were bought and sold each day. Tall bars mean lots of activity — often big news or strong interest. Short bars mean a quiet day.</div></div>
+            <div class="def-item"><div class="def-term">RSI <span class="def-pill adv">Advanced</span></div><div class="def-text">A 0–100 "speedometer" for momentum. Above 70, the stock may be <em>overbought</em> (risen too fast, could cool off). Below 30, it may be <em>oversold</em> (fallen too far, could bounce).</div></div>
+            <div class="def-item"><div class="def-term">MACD <span class="def-pill adv">Advanced</span></div><div class="def-text">Compares two trend lines to spot momentum shifts. When the MACD line crosses <em>above</em> its signal line, the trend may be turning up; crossing <em>below</em> hints it's turning down.</div></div>
+          </div>
+          <div class="def-section-label">The three overlays (the pill buttons)</div>
+          <div class="def-grid">
+            <div class="def-item"><div class="def-term">SMA 20 <span class="def-pill">Basic</span></div><div class="def-text">The average closing price over the last 20 days, drawn as a smooth line. It shows the <em>short-term</em> trend and smooths out daily noise.</div></div>
+            <div class="def-item"><div class="def-term">SMA 50 <span class="def-pill">Basic</span></div><div class="def-text">The same idea over 50 days — a slower line showing the <em>medium-term</em> trend. When the 20-line crosses above the 50-line, traders call it a bullish "golden cross."</div></div>
+            <div class="def-item"><div class="def-term">Bollinger Bands <span class="def-pill adv">Advanced</span></div><div class="def-text">Two bands above and below the price marking its normal range. Price near the top = relatively high; near the bottom = relatively low. Wide bands = big swings, narrow bands = calm.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-card" data-collapsible>
+        <div class="stats-hd col-head" onclick="toggleCard(this)"><span>Key Statistics</span><span class="col-chev">▾</span></div>
+        <div class="stats-grid-inner col-body">
           <div id="stats-col-left"></div>
           <div id="stats-col-right"></div>
         </div>
       </div>
 
-      <div class="risk-card">
-        <h3>Risk Assessment</h3>
-        <div class="risk-track" id="risk-scale"></div>
-        <div class="risk-labels"><span>Conservative</span><span>Moderate</span><span>Aggressive</span></div>
-        <div class="risk-desc" id="risk-label"></div>
+      <div class="risk-card" data-collapsible>
+        <h3 class="col-head" onclick="toggleCard(this)"><span>Risk Assessment</span><span class="col-chev">▾</span></h3>
+        <div class="col-body">
+          <div class="risk-track" id="risk-scale"></div>
+          <div class="risk-labels"><span>Conservative</span><span>Moderate</span><span>Aggressive</span></div>
+          <div class="risk-desc" id="risk-label"></div>
+        </div>
       </div>
 
-      <div class="ai-card">
+      <div class="ai-card" data-collapsible>
         <div class="ai-hd">
           <div class="ai-status-dot"></div>
           <h3>AI Financial Advisor</h3>
           <span class="ai-badge">GROQ</span>
           <button class="ai-clear-btn" onclick="clearChat()">Clear</button>
+          <span class="col-chev" style="margin-left:8px;cursor:pointer;font-size:13px" onclick="toggleCard(this)">▾</span>
         </div>
+        <div class="col-body">
         <div id="ai-messages" class="ai-messages">
           <div class="ai-loading"><div class="spinner" style="border-top-color:var(--green)"></div>Analyzing live market data...</div>
         </div>
@@ -636,10 +833,11 @@ nav{display:none}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
           </button>
         </div>
+        </div>
       </div>
 
       <div id="news-section" style="display:none">
-        <div class="news-card"><div class="news-hd">Latest News</div><div id="news-list"></div></div>
+        <div class="news-card" data-collapsible><div class="news-hd col-head" onclick="toggleCard(this)"><span>Latest News</span><span class="col-chev">▾</span></div><div class="col-body"><div id="news-list"></div></div></div>
       </div>
       <div class="disclaimer">Syndicate provides market data and analysis for informational purposes. This is not financial advice. Always conduct your own research before making investment decisions.</div>
     </div>
@@ -652,52 +850,50 @@ nav{display:none}
       <div class="learn-hero">
         <div class="learn-hero-tag">Education</div>
         <h2>Know before you invest.</h2>
-        <p>Six modules covering everything from stocks to strategy. Read one, read all — no order required.</p>
-        <div class="learn-progress">
-          <div class="learn-prog-item" onclick="openModule(0)"><span class="learn-prog-dot"></span>Stocks 101</div>
-          <div class="learn-prog-item" onclick="openModule(1)"><span class="learn-prog-dot"></span>Charts & RSI</div>
-          <div class="learn-prog-item" onclick="openModule(2)"><span class="learn-prog-dot"></span>Moving Averages</div>
-          <div class="learn-prog-item" onclick="openModule(3)"><span class="learn-prog-dot"></span>Risk & Diversification</div>
-          <div class="learn-prog-item" onclick="openModule(4)"><span class="learn-prog-dot"></span>Compound Interest</div>
-          <div class="learn-prog-item" onclick="openModule(5)"><span class="learn-prog-dot"></span>Key Terms</div>
-        </div>
+        <p>Six short lessons that build on each other. Follow the path from total beginner to confident investor — or jump in anywhere you like.</p>
       </div>
-      <div class="learn-modules">
-        <div class="learn-module" onclick="openModule(0)">
-          <div class="lm-num">01 — BASICS</div>
-          <div class="lm-title">What is a Stock?</div>
-          <div class="lm-desc">Ownership, value, and why companies go public.</div>
-          <div class="lm-arrow">→</div>
+      <div class="roadmap" id="roadmap">
+        <div class="rm-step" id="rm-step-0">
+          <div class="rm-rail"><div class="rm-node"><span>1</span></div><div class="rm-line"></div></div>
+          <div class="rm-card" onclick="openModule(0)">
+            <div><div class="rm-cat">Start here · Basics</div><div class="rm-title">What is a Stock?</div><div class="rm-desc">Ownership, value, and why companies go public.</div></div>
+            <div class="rm-go">→</div>
+          </div>
         </div>
-        <div class="learn-module" onclick="openModule(1)">
-          <div class="lm-num">02 — TECHNICAL</div>
-          <div class="lm-title">RSI & Momentum</div>
-          <div class="lm-desc">How to read overbought and oversold signals.</div>
-          <div class="lm-arrow">→</div>
+        <div class="rm-step" id="rm-step-1">
+          <div class="rm-rail"><div class="rm-node"><span>2</span></div><div class="rm-line"></div></div>
+          <div class="rm-card" onclick="openModule(1)">
+            <div><div class="rm-cat">Technical</div><div class="rm-title">RSI &amp; Momentum</div><div class="rm-desc">How to read overbought and oversold signals.</div></div>
+            <div class="rm-go">→</div>
+          </div>
         </div>
-        <div class="learn-module" onclick="openModule(2)">
-          <div class="lm-num">03 — TECHNICAL</div>
-          <div class="lm-title">Moving Averages</div>
-          <div class="lm-desc">SMA 20 vs 50 — how pros read trend direction.</div>
-          <div class="lm-arrow">→</div>
+        <div class="rm-step" id="rm-step-2">
+          <div class="rm-rail"><div class="rm-node"><span>3</span></div><div class="rm-line"></div></div>
+          <div class="rm-card" onclick="openModule(2)">
+            <div><div class="rm-cat">Technical</div><div class="rm-title">Moving Averages</div><div class="rm-desc">SMA 20 vs 50 — how pros read trend direction.</div></div>
+            <div class="rm-go">→</div>
+          </div>
         </div>
-        <div class="learn-module" onclick="openModule(3)">
-          <div class="lm-num">04 — STRATEGY</div>
-          <div class="lm-title">Risk & Diversification</div>
-          <div class="lm-desc">Why spreading your money is always smarter.</div>
-          <div class="lm-arrow">→</div>
+        <div class="rm-step" id="rm-step-3">
+          <div class="rm-rail"><div class="rm-node"><span>4</span></div><div class="rm-line"></div></div>
+          <div class="rm-card" onclick="openModule(3)">
+            <div><div class="rm-cat">Strategy</div><div class="rm-title">Risk &amp; Diversification</div><div class="rm-desc">Why spreading your money is always smarter.</div></div>
+            <div class="rm-go">→</div>
+          </div>
         </div>
-        <div class="learn-module" onclick="openModule(4)">
-          <div class="lm-num">05 — MINDSET</div>
-          <div class="lm-title">Compound Interest</div>
-          <div class="lm-desc">Why starting at 16 beats starting at 26 by miles.</div>
-          <div class="lm-arrow">→</div>
+        <div class="rm-step" id="rm-step-4">
+          <div class="rm-rail"><div class="rm-node"><span>5</span></div><div class="rm-line"></div></div>
+          <div class="rm-card" onclick="openModule(4)">
+            <div><div class="rm-cat">Mindset</div><div class="rm-title">Compound Interest</div><div class="rm-desc">Why starting at 16 beats starting at 26 by miles.</div></div>
+            <div class="rm-go">→</div>
+          </div>
         </div>
-        <div class="learn-module" onclick="openModule(5)">
-          <div class="lm-num">06 — GLOSSARY</div>
-          <div class="lm-title">Essential Terms</div>
-          <div class="lm-desc">P/E ratio, beta, EPS, market cap — all explained.</div>
-          <div class="lm-arrow">→</div>
+        <div class="rm-step" id="rm-step-5">
+          <div class="rm-rail"><div class="rm-node"><span>6</span></div><div class="rm-line"></div></div>
+          <div class="rm-card" onclick="openModule(5)">
+            <div><div class="rm-cat">Glossary</div><div class="rm-title">Essential Terms</div><div class="rm-desc">P/E ratio, beta, EPS, market cap — all explained.</div></div>
+            <div class="rm-go">→</div>
+          </div>
         </div>
       </div>
     </div>
@@ -813,6 +1009,78 @@ function updateNavBtns() {
 function goHome() { showPage('dashboard'); }
 function showAnalyzePlaceholder() { showPage('analyze', 'search'); }
 
+// ── COLLAPSIBLE CARDS ──
+function toggleCard(el){const card=el.closest('[data-collapsible]');if(card)card.classList.toggle('collapsed');}
+
+// ── STARTUP / LOGIN (DEMO ONLY — no real auth, nothing sent to server) ──
+let authMode='signin';
+function toggleAuthMode(){
+  authMode = authMode==='signin' ? 'signup' : 'signin';
+  const signup = authMode==='signup';
+  document.getElementById('auth-tag').textContent = signup ? 'Get started' : 'Welcome back';
+  document.getElementById('auth-title').textContent = signup ? 'Create your account' : 'Sign in';
+  document.getElementById('auth-lead').textContent = signup ? 'Set up Syndicate in seconds — it\u2019s free.' : 'Pick up right where you left off.';
+  document.getElementById('auth-submit-btn').textContent = signup ? 'Create account' : 'Sign in';
+  document.getElementById('auth-name-field').style.display = signup ? '' : 'none';
+  document.getElementById('auth-alt').innerHTML = signup
+    ? 'Already have an account? <a onclick="toggleAuthMode()">Sign in</a>'
+    : 'New to Syndicate? <a onclick="toggleAuthMode()">Create an account</a>';
+  document.getElementById('auth-pass').setAttribute('autocomplete', signup ? 'new-password' : 'current-password');
+  document.getElementById('auth-err').classList.remove('show');
+}
+function setAccount(name){
+  const initial=(name||'You').trim().charAt(0).toUpperCase()||'Y';
+  const av=document.getElementById('nav-avatar');
+  if(av){av.textContent=initial;av.title=name||'Signed in';}
+}
+function enterApp(name){
+  setAccount(name);
+  try{sessionStorage.setItem('siq_user', name||'Guest');}catch(e){}
+  document.getElementById('auth-overlay').classList.add('hidden');
+  document.body.classList.remove('locked');
+}
+function doLogin(){
+  const email=document.getElementById('auth-email').value.trim();
+  const pass=document.getElementById('auth-pass').value.trim();
+  if(!email || !pass){document.getElementById('auth-err').classList.add('show');return;}
+  let name=email.split('@')[0];
+  if(authMode==='signup'){const n=document.getElementById('auth-name').value.trim();if(n)name=n;}
+  enterApp(name);
+}
+function loginGuest(){ enterApp('Guest'); }
+function logout(){
+  try{sessionStorage.removeItem('siq_user');}catch(e){}
+  document.getElementById('auth-pass').value='';
+  document.getElementById('auth-err').classList.remove('show');
+  document.getElementById('auth-overlay').classList.remove('hidden');
+  document.body.classList.add('locked');
+}
+// Skip overlay if already signed in this browser session
+(function(){try{const u=sessionStorage.getItem('siq_user');if(u){setAccount(u);document.getElementById('auth-overlay').classList.add('hidden');document.body.classList.remove('locked');}}catch(e){}})();
+
+// ── RELATIVE TIME FOR NEWS ──
+function timeAgo(v){
+  if(v==null||v==='') return '';
+  let d;
+  if(typeof v==='number'){ d=new Date(v < 1e12 ? v*1000 : v); }      // unix seconds or ms
+  else if(/^\d+$/.test(String(v).trim())){ const n=+v; d=new Date(n<1e12?n*1000:n); }
+  else { d=new Date(v); }                                            // ISO / date string
+  if(isNaN(d.getTime())) return String(v);                           // unparseable -> show original
+  const sec=Math.floor((Date.now()-d.getTime())/1000);
+  if(sec<60) return 'just now';
+  const min=Math.floor(sec/60); if(min<60) return min+'m ago';
+  const hr=Math.floor(min/60);  if(hr<24)  return hr+'h ago';
+  const day=Math.floor(hr/24);  if(day===1) return 'yesterday';
+  if(day<30) return day+'d ago';
+  return d.toLocaleDateString();
+}
+
+// ── LEARN PROGRESS (roadmap done-states) ──
+function getDoneModules(){try{return JSON.parse(localStorage.getItem('siq_done')||'[]');}catch(e){return[];}}
+function markModuleDone(i){const s=new Set(getDoneModules());s.add(i);try{localStorage.setItem('siq_done',JSON.stringify([...s]));}catch(e){}refreshRoadmap();}
+function refreshRoadmap(){const done=getDoneModules();for(let i=0;i<6;i++){const step=document.getElementById('rm-step-'+i);if(step)step.classList.toggle('rm-done',done.includes(i));}}
+refreshRoadmap();
+
 // Keyboard: Alt + arrow = browser back/forward
 document.addEventListener('keydown', e => {
   if (e.altKey && e.key === 'ArrowLeft')  { e.preventDefault(); history.back(); }
@@ -834,6 +1102,7 @@ function openModule(i){
   document.getElementById('learn-panel').style.display='';
   document.getElementById('learn-panel-content').innerHTML=`<div style="font-family:var(--mono);font-size:9px;color:var(--green);letter-spacing:2px;margin-bottom:4px">${m.tag}</div>${m.content}`;
   if(i===4)setTimeout(drawLearnCharts,100);
+  markModuleDone(i);
   // Push module to browser history
   const state = {page:'learn', sub:'module', moduleIdx:i};
   history.pushState(state, '', '?page=learn&sub=module&module='+i);
@@ -1002,7 +1271,7 @@ async function quickAnalyze(ticker){
     buildStatsTable(stock);buildRisk(stock.changePct,stock.sector);
     if(history.candles&&history.candles.length){allCandles=history.candles;buildChart(rangeC(allCandles,currentRange),currentType);}
     try{const news=await apiFetch(`/stock/${ticker}/news`);if(news.articles&&news.articles.length){document.getElementById('news-section').style.display='';const sanitize=s=>s.replace(/[<>&"']/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]));
-      document.getElementById('news-list').innerHTML=news.articles.map(a=>`<div class="news-item"><a href="${a.url.startsWith('http')?a.url:'#'}" target="_blank" rel="noopener noreferrer">${sanitize(a.headline)}</a><div class="news-meta">${sanitize(a.source)} · ${sanitize(a.datetime)}</div></div>`).join('');}}catch(e){}
+      document.getElementById('news-list').innerHTML=news.articles.map(a=>`<div class="news-item"><a href="${a.url.startsWith('http')?a.url:'#'}" target="_blank" rel="noopener noreferrer">${sanitize(a.headline)}</a><div class="news-meta">${sanitize(a.source)} · ${sanitize(timeAgo(a.published ?? a.timestamp ?? a.datetime))}</div></div>`).join('');}}catch(e){}
     const verdict=stock.changePct>1.5?'buy':stock.changePct<-1.5?'caution':'hold';
     const verdictText=verdict==='buy'?'Momentum Up':verdict==='caution'?'Pulling Back':'Relatively Stable';
     const prompt=`Analyze ${ticker} (${stock.name}): Price $${stock.price.toFixed(2)}, change ${stock.changePct.toFixed(2)}%, sector ${stock.sector||'unknown'}, market cap ${stock.marketCap||'unknown'}. Write 3-4 clear sentences: what the company does, whether today's move is notable, ONE key risk. End with an educational takeaway. No jargon. No direct buy/sell.`;
@@ -1022,11 +1291,11 @@ async function quickAnalyze(ticker){
 
 async function loadWatchlist(){
   const list=getWL();const el=document.getElementById('stock-list');
-  el.innerHTML='<div class="loading-row"><div class="spinner"></div>Loading...</div>';
+  el.innerHTML='<div class="wl-loading"><div class="spinner"></div>Loading...</div>';
   const stocks=await Promise.all(list.map(t=>apiFetch(`/stock/${t}`).catch(()=>null)));
   const valid=stocks.filter(Boolean);
-  if(!valid.length){el.innerHTML='<div class="loading-row">No stocks yet — add one above!</div>';return;}
-  el.innerHTML=valid.map(s=>{const up=s.change>=0;return`<div class="wl-row"><div class="wl-left" onclick="showPage('analyze');quickAnalyze('${s.ticker}')"><div class="wl-ico">${s.ticker.slice(0,2)}</div><div><div class="wl-ticker">${s.ticker}</div><div class="wl-co">${s.name}</div></div></div><div class="wl-right"><div class="wl-price">$${s.price.toFixed(2)}</div><div class="wl-pct ${up?'up':'down'}">${up?'+':''}${s.changePct.toFixed(2)}%</div><button class="wl-rm" onclick="event.stopPropagation();removeFromWL('${s.ticker}')" title="Remove">✕</button></div></div>`;}).join('');
+  if(!valid.length){el.innerHTML='<div class="wl-loading">No stocks yet — add one above!</div>';return;}
+  el.innerHTML=valid.map(s=>{const up=s.change>=0;return`<div class="wl-card" onclick="showPage('analyze');quickAnalyze('${s.ticker}')"><button class="wl-card-rm" onclick="event.stopPropagation();removeFromWL('${s.ticker}')" title="Remove">✕</button><div class="wl-card-ico">${s.ticker.slice(0,2)}</div><div class="wl-card-ticker">${s.ticker}</div><div class="wl-card-co">${s.name}</div><div class="wl-card-price">$${s.price.toFixed(2)}</div><div class="wl-card-pct ${up?'up':'down'}">${up?'+':''}${s.changePct.toFixed(2)}%</div></div>`;}).join('');
 }
 
 async function loadMovers(){
